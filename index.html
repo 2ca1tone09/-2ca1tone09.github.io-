@@ -5,59 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>scaL_TONE</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             background-color: #ffffff;
             color: #111111;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            padding: 20px;
         }
-        .container {
-            text-align: center;
+
+        .container { text-align: center; }
+
+        /* ロゴのアニメーション (2秒かけてフェードイン) */
+        .logo {
+            max-width: 200px;
+            width: 100%;
+            height: auto;
             opacity: 0;
-            animation: fadeIn 5.0s ease-in-out forwards;
+            animation: fadeInLogo 2.0s ease-in-out forwards;
+            margin-bottom: 40px;
         }
-        .logo-placeholder {
-            font-size: 24px;
+
+        /* ナビゲーション全体のスタイル */
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 30px;
+            list-style: none;
+        }
+
+        /* 各メニュー項目のスタイル */
+        .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0; /* 最初は隠す */
+            animation: fadeInNav 1.0s ease-out forwards;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-3px);
+        }
+
+        .nav-icon {
+            width: 35px; /* アイコンの大きさ（調整可） */
+            height: auto;
+            margin-bottom: 8px;
+        }
+
+        .nav-text {
+            font-size: 9px;
             font-weight: 700;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-        }
-        .subtitle {
-            font-size: 11px;
-            font-weight: 300;
-            letter-spacing: 0.3em;
-            color: #888888;
+            letter-spacing: 0.1em;
+            color: #111111;
             text-transform: uppercase;
         }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+
+        /* 順序よくフェードインさせるための遅延設定 (ロゴが出終わる1.5秒後から開始) */
+        .nav-link:nth-child(1) { animation-delay: 1.5s; } /* about */
+        .nav-link:nth-child(2) { animation-delay: 1.7s; } /* shop */
+        .nav-link:nth-child(3) { animation-delay: 1.9s; } /* news */
+        .nav-link:nth-child(4) { animation-delay: 2.1s; } /* work */
+        .nav-link:nth-child(5) { animation-delay: 2.3s; } /* contact */
+
+        @keyframes fadeInLogo {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInNav {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- ロゴ画像を表示させます。サイズはミニマルに少し小さめに設定しています -->
-        <img src="IMG_7404.jpeg" alt="scaL_TONE" style="max-width: 200px; width: 100%; height: auto; margin-bottom: 30px;">
-        <p class="subtitle">Coming Soon</p>
+        <img src="IMG_7404.jpeg" alt="scaL_TONE" class="logo">
+
+        <nav class="nav-menu">
+            <a href="about.html" class="nav-link">
+                <img src="about.png" alt="" class="nav-icon">
+                <span class="nav-text">ABOUT</span>
+            </a>
+            <a href="shop.html" class="nav-link">
+                <img src="shop.png" alt="" class="nav-icon">
+                <span class="nav-text">SHOP</span>
+            </a>
+            <a href="news.html" class="nav-link">
+                <img src="news.png" alt="" class="nav-icon">
+                <span class="nav-text">NEWS</span>
+            </a>
+            <a href="work.html" class="nav-link">
+                <img src="work.png" alt="" class="nav-icon">
+                <span class="nav-text">WORKS</span>
+            </a>
+            <a href="contact.html" class="nav-link">
+                <img src="contact.png" alt="" class="nav-icon">
+                <span class="nav-text">CONTACT</span>
+            </a>
+        </nav>
     </div>
 </body>
 </html>
+
+このコードを使えば、シームレスで高級感のある動きになります。ぜひ試してみてくださいね。
