@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABOUT | scaL_TONE</title>
+    <title>scaL_TONE</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,62 +13,173 @@
         body {
             background-color: #ffffff;
             color: #111111;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            padding: 40px;
+            overflow: hidden;
+            padding: 20px;
         }
-        .content {
+        .container {
             text-align: center;
-            max-width: 500px;
-            opacity: 0;
-            animation: fadeInPage 1.5s ease-out forwards;
-        }
-        h1 {
-            font-size: 18px;
-            letter-spacing: 0.2em;
-            margin-bottom: 30px;
-            font-weight: 700;
-        }
-        p {
-            font-size: 14px;
-            line-height: 2;
-            letter-spacing: 0.05em;
-            color: #555555;
-            margin-bottom: 40px;
-        }
-        /* トップページへ戻るリンク */
-        .back-link {
-            display: inline-block;
-            font-size: 11px;
-            letter-spacing: 0.15em;
-            color: #111111;
-            text-decoration: none;
-            border-bottom: 1px solid #111111;
-            padding-bottom: 4px;
-            transition: opacity 0.3s ease;
-        }
-        .back-link:hover {
-            opacity: 0.5;
+            width: 100%;
+            max-width: 600px;
         }
 
-        @keyframes fadeInPage {
-            from { opacity: 0; transform: translateY(10px); }
+        /* ロゴの初期フェードイン */
+        .logo {
+            max-width: 180px;
+            width: 100%;
+            height: auto;
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeInLogo 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* ナビゲーションメニュー */
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 32px;
+            list-style: none;
+            width: 100%;
+        }
+
+        /* メニュー項目のスタイル */
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #111111;
+            opacity: 0;
+            animation: fadeInNav 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        /* ホバー時の緩やかな浮き上がり */
+        .nav-item:hover {
+            transform: translateY(-2px);
+        }
+
+        /* アイコン画像の設定 */
+        .nav-icon {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            margin-bottom: 12px;
+            /* 回転とフェードアウト用のトランジション */
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+        }
+
+        /* テキストの設定 */
+        .nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            transition: opacity 0.4s ease;
+        }
+
+        /* 順次表示されるディレイ設定 */
+        .nav-item:nth-child(1) { animation-delay: 1.8s; }
+        .nav-item:nth-child(2) { animation-delay: 2.0s; }
+        .nav-item:nth-child(3) { animation-delay: 2.2s; }
+        .nav-item:nth-child(4) { animation-delay: 2.4s; }
+        .nav-item:nth-child(5) { animation-delay: 2.6s; }
+
+        /* --- クリック時にJavaScriptで付与するクラス --- */
+        
+        /* クリックされたアイコン：一回転して消える */
+        .nav-item.clicked .nav-icon {
+            transform: rotate(360deg) scale(0.8);
+            opacity: 0;
+        }
+
+        /* クリックされなかった他の項目：そのまま静かにフェードアウト */
+        .nav-item.fade-out {
+            opacity: 0 !important;
+            transform: translateY(4px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        /* 中央のロゴも一緒に静かに消去 */
+        .logo.fade-out {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        @keyframes fadeInLogo {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInNav {
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <div class="content">
-        <h1>ABOUT</h1>
-        <p>
-            ここにブランドのコンセプトや、紹介文テキストを記述します。<br>
-            余白を活かした静かなデザインがブランドを引き立てます。
-        </p>
-        <a href="index.html" class="back-link">BACK TO HOME</a>
+    <div class="container">
+        <img src="HOME.png" alt="scaL_TONE" class="logo" id="logo">
+
+        <nav class="nav-menu">
+            <a href="about.html" class="nav-item">
+                <img src="./about.png" alt="" class="nav-icon">
+                <span class="nav-label">ABOUT</span>
+            </a>
+            <a href="shop.html" class="nav-item">
+                <img src="./shop.png" alt="" class="nav-icon">
+                <span class="nav-label">SHOP</span>
+            </a>
+            <a href="news.html" class="nav-item">
+                <img src="./news.png" alt="" class="nav-icon">
+                <span class="nav-label">NEWS</span>
+            </a>
+            <a href="works.html" class="nav-item">
+                <img src="./work.png" alt="" class="nav-icon">
+                <span class="nav-label">WORKS</span>
+            </a>
+            <a href="contact.html" class="nav-item">
+                <img src="./contact.png" alt="" class="nav-icon">
+                <span class="nav-label">CONTACT</span>
+            </a>
+        </nav>
     </div>
+
+    <script>
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // 通常の即時ページ遷移を一旦キャンセル
+                e.preventDefault();
+                
+                const targetUrl = this.getAttribute('href');
+                const allItems = document.querySelectorAll('.nav-item');
+                const logo = document.getElementById('logo');
+
+                // 他のメニューとロゴをフェードアウト
+                allItems.forEach(el => {
+                    if (el !== this) {
+                        el.classList.add('fade-out');
+                    }
+                });
+                logo.classList.add('fade-out');
+
+                // クリックされたアイコンに回転＆フェードアウトを適用
+                this.classList.add('clicked');
+
+                // アニメーション時間（0.6秒 = 600ミリ秒）を待ってからページを切り替える
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 600);
+            });
+        });
+    </script>
 </body>
 </html>
