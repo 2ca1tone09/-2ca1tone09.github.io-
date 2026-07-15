@@ -5,45 +5,193 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CONFIRM | scaL_TONE</title>
     <style>
-        /* スタイルはcontact.htmlと同じため省略気味に記述 */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: #ffffff; color: #111111; font-family: sans-serif; padding: 40px 20px 100px; }
-        header { max-width: 1200px; margin: 0 auto 80px; display: flex; justify-content: flex-end; }
-        .current-page { font-size: 10px; letter-spacing: 0.2em; border-bottom: 1px solid #111; padding-bottom: 4px; }
-        .contact-container { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; max-width: 1100px; margin: 0 auto; padding: 45px 0; border-top: 1px solid #eeeeee; }
-        .contact-label { grid-column: 1 / 3; font-size: 10px; color: #888; }
-        .contact-content { grid-column: 3 / 8; display: flex; flex-direction: column; gap: 30px; }
-        .confirm-val { font-size: 14px; line-height: 1.8; color: #333; margin-bottom: 20px; }
-        .btn { display: inline-block; font-size: 11px; border-bottom: 1px solid #111; padding-bottom: 4px; cursor: pointer; text-transform: uppercase; border: none; background: none; margin-right: 20px; }
+        
+        body { 
+            background-color: #ffffff; 
+            color: #111111; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            padding: 40px 20px 100px; 
+        }
+        
+        header { 
+            max-width: 1200px; 
+            margin: 0 auto 80px; 
+            display: flex; 
+            justify-content: flex-end; 
+        }
+        
+        .current-page { 
+            font-size: 10px; 
+            letter-spacing: 0.2em; 
+            font-weight: 700; 
+            border-bottom: 1px solid #111; 
+            padding-bottom: 4px; 
+            text-transform: uppercase;
+        }
+        
+        /* 3カラムグリッドコンテナ（INPUT画面と完全統一） */
+        .contact-container { 
+            display: grid; 
+            grid-template-columns: repeat(12, 1fr); 
+            gap: 20px; 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            padding: 45px 0; 
+            border-top: 1px solid #eeeeee; 
+        }
+        
+        /* 左：ラベル（Confirm） */
+        .contact-label { 
+            grid-column: 1 / 3; 
+            font-size: 10px; 
+            letter-spacing: 0.1em; 
+            color: #888888; 
+            text-transform: uppercase; 
+        }
+        
+        /* 中央：コンテンツエリア */
+        .contact-content { 
+            grid-column: 3 / 8; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 30px; 
+        }
+        
+        /* 右：余白スペース */
+        .contact-right-space {
+            grid-column: 8 / 13;
+        }
+        
+        /* 確認項目のラッパー */
+        .confirm-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+        }
+        
+        .confirm-group label { 
+            font-size: 10px; 
+            font-weight: 700; 
+            letter-spacing: 0.1em;
+            color: #111111;
+        }
+        
+        /* 入力内容の表示用ボックス（INPUT画面の枠線や背景と統一感を持たせています） */
+        .confirm-val { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #e0e0e0; 
+            font-size: 14px; 
+            background-color: #fafafa; 
+            color: #333333;
+            line-height: 1.6;
+            white-space: pre-wrap; /* 改行を維持 */
+        }
+        
+        /* ボタンエリア：中央揃えの設定 */
+        .btn-wrapper {
+            margin-top: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 40px; /* ボタン同士の間隔 */
+        }
+
+        .btn { 
+            display: inline-block; 
+            font-size: 11px; 
+            letter-spacing: 0.15em; 
+            border: none;
+            background: none;
+            border-bottom: 1px solid #111; 
+            padding-bottom: 4px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            color: #111111;
+            transition: opacity 0.3s;
+        }
+        
+        .btn:hover {
+            opacity: 0.5;
+        }
+
+        /* BACKボタンのスタイルを少し控えめに */
+        .btn-back {
+            color: #888888;
+            border-bottom: 1px solid #888888;
+        }
+        
+        @media (max-width: 768px) { 
+            .contact-container { 
+                display: flex; 
+                flex-direction: column; 
+                gap: 30px;
+            } 
+            .contact-label {
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
 <body>
-    <header><div class="current-page">CONTACT</div></header>
+    <header>
+        <div class="current-page">CONTACT</div>
+    </header>
     <main>
         <form action="https://formspree.io/f/xrenekng" method="POST" class="contact-container">
+            <!-- 左カラム -->
             <div class="contact-label">Confirm</div>
+            
+            <!-- 中央カラム -->
             <div class="contact-content">
-                <div id="display-area"></div>
+                <!-- JavaScriptでこの中に確認項目が自動生成されます -->
+                <div id="display-area" style="display: flex; flex-direction: column; gap: 30px;"></div>
+                
+                <!-- Formspreeへ送信するための隠しパラメータ -->
                 <input type="hidden" name="type" id="hidden-type">
                 <input type="hidden" name="name" id="hidden-name">
                 <input type="hidden" name="email" id="hidden-email">
                 <input type="hidden" name="message" id="hidden-message">
                 <input type="hidden" name="_next" value="https://scaltone.com/contact-complete.html">
                 
-                <div>
-                    <button type="button" class="btn" onclick="history.back()" style="color:#888; border-color:#888;">BACK</button>
-                    <button type="submit" class="btn">SUBMIT / 送信</button>
+                <!-- 中央配置されたボタンラッパー -->
+                <div class="btn-wrapper">
+                    <button type="button" class="btn btn-back" onclick="history.back()">BACK</button>
+                    <button type="submit" class="btn">SUBMIT</button>
                 </div>
             </div>
+
+            <!-- 右カラム -->
+            <div class="contact-right-space"></div>
         </form>
     </main>
+
     <script>
+        // URLから入力パラメータを解析して画面にセットする処理
         const p = new URLSearchParams(window.location.search);
         const fields = ['type', 'name', 'email', 'message'];
+        
+        // 画面表示用の日本語ラベルマッピング
+        const labelMap = {
+            'type': 'Inquiry Type',
+            'name': 'Name',
+            'email': 'Email',
+            'message': 'Message'
+        };
+
         fields.forEach(f => {
-            const val = p.get(f);
+            const val = p.get(f) || '';
+            // 隠しインプットに値をセット
             document.getElementById('hidden-' + f).value = val;
-            document.getElementById('display-area').innerHTML += `<div style="margin-bottom:20px;"><label style="font-size:10px; font-weight:700; display:block; margin-bottom:5px;">${f.toUpperCase()}</label><div class="confirm-val">${val}</div></div>`;
+            
+            // INPUT画面とシームレスに繋がるデザインで表示エリアに構築
+            document.getElementById('display-area').innerHTML += `
+                <div class="confirm-group">
+                    <label>${labelMap[f]}</label>
+                    <div class="confirm-val">${val}</div>
+                </div>
+            `;
         });
     </script>
 </body>
