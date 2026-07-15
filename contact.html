@@ -5,70 +5,343 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CONTACT | scaL_TONE</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
             background-color: #ffffff;
             color: #111111;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 40px 20px 100px;
+        }
+
+        /* 右上のページ表示 */
+        header {
+            max-width: 1200px;
+            margin: 0 auto 80px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .current-page {
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            font-weight: 700;
+            color: #111;
+            text-transform: uppercase;
+            border-bottom: 1px solid #111;
+            padding-bottom: 4px;
+        }
+
+        /* 3カラム構成のコンテナ（NewsやWorksと同じ横幅に統一） */
+        .contact-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            opacity: 0;
+            animation: fadeInPage 1.2s ease-out forwards;
+        }
+
+        /* フォームの各フェーズ（初期は非表示、JSで制御） */
+        .form-phase {
+            display: none;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+            padding: 45px 0;
+            border-top: 1px solid #eeeeee;
+        }
+
+        /* アクティブなフェーズだけ表示する */
+        .form-phase.active {
+            display: grid;
+        }
+
+        /* 左カラム：セクションラベル（ABOUTやNEWSと同じpensiveな余白） */
+        .contact-label {
+            grid-column: 1 / 3;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            color: #888888;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        /* 中央カラム：フォームの入力・確認・完了エリア */
+        .contact-content {
+            grid-column: 3 / 8;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            padding: 40px;
+            gap: 30px;
         }
-        .content {
-            text-align: center;
-            max-width: 500px;
-            opacity: 0;
-            animation: fadeInPage 1.5s ease-out forwards;
+
+        /* 右カラム：装飾または空白スペース（レイアウト維持のため） */
+        .contact-right-space {
+            grid-column: 8 / 13;
         }
-        h1 {
-            font-size: 18px;
-            letter-spacing: 0.2em;
-            margin-bottom: 30px;
+
+        /* フォーム入力要素のミニマルデザイン */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 10px;
             font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #111;
         }
-        p {
+
+        /* 入力欄（枠線を極限まで細く、シンプルに） */
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 0; /* カチッとしたミニマルな角 */
+            font-size: 14px;
+            color: #111;
+            background-color: #fafafa;
+            outline: none;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #111111;
+            background-color: #ffffff;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* 確認画面用の静的テキスト表示 */
+        .confirm-value {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #333333;
+            padding: 4px 0;
+            white-space: pre-wrap; /* 改行を維持 */
+        }
+
+        /* 完了画面のメッセージ */
+        .complete-message {
             font-size: 14px;
             line-height: 2;
+            color: #333333;
             letter-spacing: 0.05em;
-            color: #555555;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
-        /* トップページへ戻るリンク */
+
+        /* アクションボタン（Next / Submit） */
+        .btn-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            color: #111;
+            background: none;
+            border: none;
+            border-bottom: 1px solid #111;
+            padding-bottom: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: opacity 0.3s;
+        }
+
+        .btn:hover {
+            opacity: 0.5;
+        }
+
+        .btn-secondary {
+            color: #888888;
+            border-bottom: 1px solid #888888;
+        }
+
+        /* 最下部のBack to home */
+        footer {
+            margin-top: 100px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* BACK TO HOMEは最初は非表示、COMPLETEの時だけ表示されるようJSで制御します */
+        footer.show {
+            opacity: 1;
+        }
+
         .back-link {
             display: inline-block;
             font-size: 11px;
             letter-spacing: 0.15em;
-            color: #111111;
+            color: #111;
             text-decoration: none;
-            border-bottom: 1px solid #111111;
+            border-bottom: 1px solid #111;
             padding-bottom: 4px;
             transition: opacity 0.3s ease;
+            text-transform: uppercase;
         }
-        .back-link:hover {
-            opacity: 0.5;
-        }
+
+        .back-link:hover { opacity: 0.5; }
 
         @keyframes fadeInPage {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* モバイル対応（3カラムを縦並びに） */
+        @media (max-width: 768px) {
+            .form-phase { display: flex; flex-direction: column; gap: 15px; }
+            .contact-label { margin-bottom: 10px; }
+            header { margin-bottom: 40px; }
+        }
     </style>
 </head>
 <body>
-    <div class="content">
-        <h1>CONTACT</h1>
-        <p>
-            ここにブランドのコンセプトや、紹介文テキストを記述します。<br>
-            余白を活かした静かなデザインがブランドを引き立てます。
-        </p>
-        <a href="index.html" class="back-link">BACK TO HOME</a>
-    </div>
+
+    <header>
+        <div class="current-page">CONTACT</div>
+    </header>
+
+    <main class="contact-container">
+        <div id="phase-input" class="form-phase active">
+            <div class="contact-label">Input Form</div>
+            <div class="contact-content">
+                <form id="contact-form">
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="inquiry-type">Inquiry Type / 問い合わせ種別</label>
+                        <select id="inquiry-type" required>
+                            <option value="" disabled selected>選択してください</option>
+                            <option value="ご依頼">ご依頼</option>
+                            <option value="見積もり相談">見積もり相談</option>
+                            <option value="その他">その他</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="user-name">Name / お名前</label>
+                        <input type="text" id="user-name" required placeholder="お名前を入力してください">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="user-email">Email / メールアドレス</label>
+                        <input type="email" id="user-email" required placeholder="example@gmail.com">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 30px;">
+                        <label for="message">Message / お問い合わせ内容</label>
+                        <textarea id="message" required placeholder="内容を入力してください"></textarea>
+                    </div>
+
+                    <button type="button" class="btn" onclick="goToConfirm()">NEXT / 次へ</button>
+                </form>
+            </div>
+            <div class="contact-right-space"></div>
+        </div>
+
+        <div id="phase-confirm" class="form-phase">
+            <div class="contact-label">Confirm</div>
+            <div class="contact-content">
+                <div class="form-group">
+                    <label>Inquiry Type / 問い合わせ種別</label>
+                    <div id="confirm-type" class="confirm-value"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Name / お名前</label>
+                    <div id="confirm-name" class="confirm-value"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email / メールアドレス</label>
+                    <div id="confirm-email" class="confirm-value"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Message / お問い合わせ内容</label>
+                    <div id="confirm-message" class="confirm-value"></div>
+                </div>
+
+                <div class="btn-container">
+                    <button type="button" class="btn btn-secondary" onclick="goToInput()">BACK / 戻る</button>
+                    <button type="button" class="btn" onclick="goToComplete()">SUBMIT / 送信</button>
+                </div>
+            </div>
+            <div class="contact-right-space"></div>
+        </div>
+
+        <div id="phase-complete" class="form-phase">
+            <div class="contact-label">Complete</div>
+            <div class="contact-content">
+                <p class="complete-message">
+                    お問い合わせありがとうございます。<br>
+                    確認しだいお返事いたします。
+                </p>
+            </div>
+            <div class="contact-right-space"></div>
+        </div>
+    </main>
+
+    <footer id="footer-nav">
+        <a href="index.html" class="back-link">Back to home</a>
+    </footer>
+
+    <script>
+        const phaseInput = document.getElementById('phase-input');
+        const phaseConfirm = document.getElementById('phase-confirm');
+        const phaseComplete = document.getElementById('phase-complete');
+        const footerNav = document.getElementById('footer-nav');
+
+        // 入力画面 ➡ 確認画面へ
+        function goToConfirm() {
+            const form = document.getElementById('contact-form');
+            if (!form.checkValidity()) {
+                form.reportValidity(); // 入力不備がある場合はブラウザ標準のエラーを表示
+                return;
+            }
+
+            // 入力された値を取得して確認画面に反映
+            document.getElementById('confirm-type').innerText = document.getElementById('inquiry-type').value;
+            document.getElementById('confirm-name').innerText = document.getElementById('user-name').value;
+            document.getElementById('confirm-email').innerText = document.getElementById('user-email').value;
+            document.getElementById('confirm-message').innerText = document.getElementById('message').value;
+
+            // 画面を切り替える
+            phaseInput.classList.remove('active');
+            phaseConfirm.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // 確認画面 ➡ 入力画面へ戻る
+        function goToInput() {
+            phaseConfirm.classList.remove('active');
+            phaseInput.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // 確認画面 ➡ 完了画面へ
+        function goToComplete() {
+            phaseConfirm.classList.remove('active');
+            phaseComplete.classList.add('active');
+            
+            // COMPLETE画面になったときだけ、最下部のBACK TO HOMEを表示
+            footerNav.classList.add('show');
+            window.scrollTo(0, 0);
+        }
+    </script>
+
 </body>
 </html>
