@@ -26,19 +26,27 @@
             text-align: center;
             width: 100%;
             max-width: 600px;
+            position: relative;
         }
 
-        /* ロゴの初期フェードイン */
+        /* 1. 中央のロゴ（初期状態：心臓の拍動アニメーション） */
+        .logo-wrapper {
+            display: inline-block;
+            margin-bottom: 50px;
+            transition: margin-bottom 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
         .logo {
             max-width: 180px;
             width: 100%;
             height: auto;
-            margin-bottom: 50px;
-            opacity: 0;
-            animation: fadeInLogo 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            cursor: pointer;
+            /* 心臓の拍動アニメーション（無限ループ） */
+            animation: heartbeat 2.0s infinite ease-in-out;
+            transition: transform 0.5s ease;
         }
 
-        /* ナビゲーションメニュー */
+        /* 2. ナビゲーションメニュー（最初は非表示、かつクリック不可） */
         .nav-menu {
             display: flex;
             justify-content: center;
@@ -46,6 +54,10 @@
             gap: 32px;
             list-style: none;
             width: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.9);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* メニュー項目のスタイル */
@@ -55,9 +67,7 @@
             align-items: center;
             text-decoration: none;
             color: #111111;
-            opacity: 0;
-            animation: fadeInNav 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, opacity 0.5s ease;
             cursor: pointer;
         }
 
@@ -72,7 +82,6 @@
             height: 32px;
             object-fit: contain;
             margin-bottom: 12px;
-            /* 回転とフェードアウト用のトランジション */
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
         }
 
@@ -82,99 +91,140 @@
             font-weight: 700;
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            transition: opacity 0.4s ease;
         }
 
-        /* 順次表示されるディレイ設定 */
-        .nav-item:nth-child(1) { animation-delay: 1.8s; }
-        .nav-item:nth-child(2) { animation-delay: 2.0s; }
-        .nav-item:nth-child(3) { animation-delay: 2.2s; }
-        .nav-item:nth-child(4) { animation-delay: 2.4s; }
-        .nav-item:nth-child(5) { animation-delay: 2.6s; }
+        /* --- 状態変更用クラス (JavaScriptで制御) --- */
 
-        /* --- クリック時にJavaScriptで付与するクラス --- */
+        /* ロゴをクリックした後のレイアウト調整 */
+        .activated .logo-wrapper {
+            margin-bottom: 50px; /* 位置を定位置に固定 */
+        }
         
-        /* クリックされたアイコン：一回転して消える */
+        /* 拍動アニメーションを止める */
+        .activated .logo {
+            animation: none;
+            transform: scale(1);
+        }
+
+        /* ナビゲーションを飛び出させて表示する */
+        .activated .nav-menu {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+
+        /* ページ遷移時の演出：クリックされたアイコンは一回転して消える */
         .nav-item.clicked .nav-icon {
             transform: rotate(360deg) scale(0.8);
             opacity: 0;
         }
 
-        /* クリックされなかった他の項目：そのまま静かにフェードアウト */
+        /* ページ遷移時の演出：クリックされなかった他の項目はフェードアウト */
         .nav-item.fade-out {
             opacity: 0 !important;
             transform: translateY(4px);
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-        /* 中央のロゴも一緒に静かに消去 */
-        .logo.fade-out {
+        /* ページ遷移時：中央のロゴも一緒にフェードアウト */
+        .logo-wrapper.fade-out {
             opacity: 0;
             transform: translateY(-10px);
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-        @keyframes fadeInLogo {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInNav {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* 心臓の拍動（鼓動）アニメーション */
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+                opacity: 0.85;
+            }
+            14% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+            28% {
+                transform: scale(1);
+                opacity: 0.85;
+            }
+            42% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+            70% {
+                transform: scale(1);
+                opacity: 0.85;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.85;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <img src="assets/HOME.png" alt="scaL_TONE" class="logo" id="logo">
+    <div class="container" id="main-container">
+        <div class="logo-wrapper" id="logo-wrap">
+            <img src="/assets/logo2.png" alt="scaL_TONE" class="logo" id="logo">
+        </div>
 
         <nav class="nav-menu">
             <a href="about.html" class="nav-item">
-                <img src="assets/./about.png" alt="" class="nav-icon">
+                <img src="/assets/about.png" alt="" class="nav-icon">
                 <span class="nav-label">ABOUT</span>
             </a>
             <a href="shop.html" class="nav-item">
-                <img src="assets/./shop.png" alt="" class="nav-icon">
+                <img src="/assets/shop.png" alt="" class="nav-icon">
                 <span class="nav-label">SHOP</span>
             </a>
             <a href="news.html" class="nav-item">
-                <img src="assets/./news.png" alt="" class="nav-icon">
+                <img src="/assets/news.png" alt="" class="nav-icon">
                 <span class="nav-label">NEWS</span>
             </a>
             <a href="works.html" class="nav-item">
-                <img src="assets/./work.png" alt="" class="nav-icon">
+                <img src="/assets/work.png" alt="" class="nav-icon">
                 <span class="nav-label">WORKS</span>
             </a>
             <a href="contact.html" class="nav-item">
-                <img src="assets/./contact.png" alt="" class="nav-icon">
+                <img src="/assets/contact.png" alt="" class="nav-icon">
                 <span class="nav-label">CONTACT</span>
             </a>
         </nav>
     </div>
 
     <script>
+        const container = document.getElementById('main-container');
+        const logo = document.getElementById('logo');
+        const logoWrap = document.getElementById('logo-wrap');
+
+        // 1. ロゴクリック時の「メニュー飛び出し（アクティベート）」処理
+        logo.addEventListener('click', function() {
+            if (!container.classList.contains('activated')) {
+                // アクティブ用クラスを付与してナビゲーションを展開
+                container.classList.add('activated');
+            }
+        });
+
+        // 2. 各メニューをクリックした時の「ページ遷移」処理
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function(e) {
-                // 通常の即時ページ遷移を一旦キャンセル
                 e.preventDefault();
                 
                 const targetUrl = this.getAttribute('href');
                 const allItems = document.querySelectorAll('.nav-item');
-                const logo = document.getElementById('logo');
 
-                // 他のメニューとロゴをフェードアウト
+                // ロゴと他の項目をスムーズに消去
                 allItems.forEach(el => {
                     if (el !== this) {
                         el.classList.add('fade-out');
                     }
                 });
-                logo.classList.add('fade-out');
+                logoWrap.classList.add('fade-out');
 
-                // クリックされたアイコンに回転＆フェードアウトを適用
+                // 自分自身を回転フェードアウト
                 this.classList.add('clicked');
 
-                // アニメーション時間（0.6秒 = 600ミリ秒）を待ってからページを切り替える
+                // アニメーション完了後に遷移
                 setTimeout(() => {
                     window.location.href = targetUrl;
                 }, 600);
