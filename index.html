@@ -33,8 +33,9 @@
         .logo-wrapper {
             display: inline-block;
             margin-bottom: 50px;
+            /* 改善ポイント：初期状態を最初から完全に透明にしておくことで、読み込み時のチラつきを完全に防ぎます */
             opacity: 0;
-            /* 起動時：1.8秒かけてフェードイン ➡ 4.0秒後から3.5秒周期の深い鼓動を開始 */
+            /* 起動時：4秒かけてフェードイン ➡ その後3秒の遅延（起動中盤）から3.5秒周期の深い鼓動を開始 */
             animation: fadeInLogo 4.0s cubic-bezier(0.4, 0, 0.2, 1) forwards, 
                        heartbeat 3.5s infinite ease-in-out 3.0s;
             transition: opacity 0.5s ease, transform 0.5s ease;
