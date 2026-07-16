@@ -44,22 +44,23 @@
             max-width: 1000px; 
             margin: 0 auto; 
             padding: 45px 0; 
-            border-top: 1px solid #eeeeee; 
             width: 100%;
         }
         
-        /* 3. 各ワークアイテムの共通設計 */
+        /* 3. 各ワークアイテムの共通設計（参考画像の境界線グリッドを再現） */
         .work-item { 
             position: relative; 
             text-decoration: none; 
             display: block; 
-            margin-bottom: 100px;
+            margin-bottom: 140px; /* 余白をより贅沢に広げて緊張感を持たせる */
+            border-top: 1px solid #111111; /* アイテム幅に同期する美しい水平境界線 */
+            padding-top: 25px; /* 線と画像の間の余白 */
             
             /* ロード時の滑らかな順番フェードインのための初期状態 */
             opacity: 0;
             transform: translateY(15px);
-            transition: opacity 1.0s cubic-bezier(0.4, 0, 0.2, 1), 
-                        transform 1.0s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* フェードイン表示クラス */
@@ -68,20 +69,25 @@
             transform: translateY(0);
         }
         
+        /* ラベル（参考画像のように線の上に直接乗るように精密配置） */
         .work-label { 
+            position: absolute;
+            top: -1px; /* 境界線の真上に乗せる */
+            transform: translateY(-100%); /* 線より上へ逃がす */
             display: block; 
             font-size: 10px; 
             letter-spacing: 0.15em; 
             color: #111111; 
-            margin-bottom: 12px; 
-            font-weight: 700; 
+            padding-bottom: 6px; 
+            font-weight: 500; 
             text-transform: uppercase; 
+            transition: opacity 0.3s ease;
         }
         
+        /* 画像ボックス（枠線を完全に廃止し、アートブックのモノクロカットのような佇まいに） */
         .image-box { 
             overflow: hidden; 
-            background-color: #fcfcfc; 
-            border: 1px solid #f0f0f0;
+            background-color: #fafafa;
         }
         
         .image-box img { 
@@ -89,29 +95,39 @@
             height: auto; 
             display: block; 
             filter: grayscale(100%); 
-            transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
-                        transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: filter 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                        transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
         
+        /* ホバーインタラクション */
         .work-item:hover img, .work-item:active img { 
             filter: grayscale(0%); 
-            transform: scale(1.04); 
+            transform: scale(1.03); 
+        }
+
+        /* ホバー時に境界線の存在感を少し高める、あるいは変化させる繊細な演出 */
+        .work-item {
+            transition: border-color 0.4s ease;
+        }
+        .work-item:hover {
+            border-color: #888888;
         }
         
-        /* 建築学生時代の課題・ポートフォリオ用の特別な固定スタイル (全体に調和するサイズへ控えめに調整) */
+        /* 建築学生時代の課題・ポートフォリオ用の特別な固定スタイル */
         .portfolio-item {
-            grid-column: 3 / 11 !important; /* 中央に程よい存在感で美しく収まるサイズ（10スパンから8スパンに変更） */
-            margin-top: 80px !important;
-            margin-bottom: 0px !important;
+            grid-column: 3 / 11 !important; 
+            margin-top: 100px !important;
+            margin-bottom: 20px !important;
+            border-top: 1px solid #888888; /* ポートフォリオは少しトーンを落とした細いグレー線 */
         }
 
         .portfolio-item .work-label {
-            color: #888888; /* 少し控えめなプレミアムグレー */
+            color: #888888; 
         }
         
         /* 4. 最下部のBack to home（他ページと完全統一） */
         footer {
-            margin-top: 100px;
+            margin-top: 60px;
             text-align: center;
             width: 100%;
         }
@@ -137,13 +153,19 @@
             .works-grid { 
                 display: flex;
                 flex-direction: column;
-                gap: 50px;
+                gap: 70px;
             } 
             .work-item {
                 width: 100% !important;
                 margin-top: 0 !important;
                 margin-bottom: 20px !important;
                 transform: none !important;
+                border-top: 1px solid #eeeeee;
+            }
+            .work-label {
+                position: static;
+                transform: none;
+                margin-bottom: 8px;
             }
         }
     </style>
@@ -218,16 +240,16 @@
             const items = Array.from(grid.querySelectorAll('.work-item:not(.portfolio-item)'));
             const portfolioItem = grid.querySelector('.portfolio-item');
 
-            // 【画像縮小アップデート】最大幅を制限した、上品で引き締まったレイアウトパターン
+            // 【画像縮小・段違いグリッド】参考画像の、線の美しさとアシンメトリーが極大化するパターン
             const layoutPatterns = [
-                { gridColumn: '2 / 7', marginTop: '0px' },       // パターンA: 5カラム幅（左寄り、1カラム空け）
-                { gridColumn: '8 / 11', marginTop: '-40px' },    // パターンB: 3カラム幅（右寄り、適度なタイトさ）
-                { gridColumn: '4 / 10', marginTop: '50px' },     // パターンC: 6カラム幅（中央寄り、余白を広く）
-                { gridColumn: '2 / 6', marginTop: '20px' },      // パターンD: 4カラム幅
-                { gridColumn: '8 / 12', marginTop: '-20px' },    // パターンE: 4カラム幅
-                { gridColumn: '5 / 9', marginTop: '60px' },      // パターンF: 4カラム幅（中央、左右に広い静寂）
-                { gridColumn: '3 / 7', marginTop: '10px' },      // パターンG: 4カラム幅
-                { gridColumn: '9 / 12', marginTop: '-30px' }     // パターンH: 3カラム幅
+                { gridColumn: '2 / 7', marginTop: '0px' },       // パターンA: 5カラム（やや左、1カラム空け）
+                { gridColumn: '8 / 12', marginTop: '-60px' },    // パターンB: 4カラム（右寄せ、線と高さが隣と大胆にズレる）
+                { gridColumn: '4 / 10', marginTop: '70px' },     // パターンC: 6カラム（中央、上下に贅沢な空白を発生させる）
+                { gridColumn: '2 / 6', marginTop: '10px' },      // パターンD: 4カラム（小さく上品に）
+                { gridColumn: '7 / 12', marginTop: '-30px' },    // パターンE: 5カラム（右寄り）
+                { gridColumn: '5 / 9', marginTop: '80px' },      // パターンF: 4カラム（完全に中寄せして左右に広大なホワイトスペース）
+                { gridColumn: '3 / 8', marginTop: '20px' },      // パターンG: 5カラム
+                { gridColumn: '9 / 12', marginTop: '-40px' }     // パターンH: 3カラム（右端に極めてコンパクトに配置、余白を増幅）
             ];
 
             // パターン配列をランダムにシャッフルするアルゴリズム
@@ -251,13 +273,13 @@
                 item.style.marginTop = pattern.marginTop;
             });
 
-            // 【追加演出】すべてのアイテム（ポートフォリオを含む）を順番に滑らかにフェードイン
+            // すべてのアイテム（ポートフォリオを含む）を順番に滑らかにフェードイン
             const allItems = [...items, portfolioItem];
             allItems.forEach((item, index) => {
                 if (item) {
                     setTimeout(() => {
                         item.classList.add('visible');
-                    }, index * 200); // 0.2秒ずつズレながら滑らかに波のように表示
+                    }, index * 180); // 180msで小気味よくウェーブするように展開
                 }
             });
         });
