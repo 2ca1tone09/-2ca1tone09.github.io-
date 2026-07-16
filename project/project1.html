@@ -16,6 +16,14 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            opacity: 1;
+            transition: opacity 0.5s ease, transform 0.5s ease; /* ページ遷移時のフェードアウト用 */
+        }
+
+        /* ページ全体がフェードアウトするときのクラス */
+        body.page-fade-out {
+            opacity: 0 !important;
+            transform: translateY(-8px);
         }
         
         /* 1. 右上のページ表示（他ページと完全統一） */
@@ -69,7 +77,7 @@
             transform: scale(1.02);
         }
         
-        /* 3. 3カラム構成の解説・仕様セクション（他の個別ページと完全同一ピクセルで整合） */
+        /* 3. 3カラム構成の解説・仕様セクション */
         .project-detail-container { 
             display: grid; 
             grid-template-columns: repeat(12, 1fr); 
@@ -77,7 +85,7 @@
             max-width: 1000px; 
             margin: 0 auto; 
             padding: 45px 0; 
-            border-top: 1px solid #111111; /* 上部に端正な境界線を引く */
+            border-top: 1px solid #111111; 
             width: 100%;
             opacity: 0;
             transform: translateY(15px);
@@ -116,10 +124,10 @@
             color: #333333;
         }
 
-        /* 右カラム：リファレンス画像を参考にした美しく知的な工学・技術スペックテーブル */
+        /* 右カラム：工学・技術スペックテーブル */
         .project-spec-area {
             grid-column: 8 / 13;
-            font-family: 'Courier New', Courier, monospace; /* 等幅フォントでアナログな図面・工業資料の静寂を演出 */
+            font-family: 'Courier New', Courier, monospace; 
             font-size: 11px;
             color: #555555;
             display: flex;
@@ -146,7 +154,7 @@
             letter-spacing: 0.02em;
         }
         
-        /* 4. 最下部のBack to home / Works（他ページと完全統一） */
+        /* 4. 最下部のBack to home / Works */
         footer {
             margin-top: 100px;
             text-align: center;
@@ -163,6 +171,17 @@
             padding-bottom: 4px;
             transition: opacity 0.3s ease;
             text-transform: uppercase;
+            position: relative; /* 擬似要素の位置決めのための基準点 */
+        }
+        
+        /* 【極上UX設計】見た目のフォントバランスを維持したまま、指やマウスが反応するタップ可能領域だけを広げます */
+        .back-link::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            bottom: -15px;
+            left: -25px;
+            right: -25px;
         }
         
         .back-link:hover {
@@ -208,11 +227,6 @@
     <!-- メインビジュアルエリア -->
     <div class="hero-container">
         <div class="hero-image-box">
-            <!-- 
-                 [書き換えポイント①: メインビジュアル画像] 
-                 各プロジェクトを象徴するメインの画像パスに変更してください。
-                 (例: /assets/p1_main.png など)
-            -->
             <img src="/assets/p1.png" alt="Project Main Visual" onerror="this.src='/assets/logo2.png'">
         </div>
     </div>
@@ -220,30 +234,23 @@
     <!-- メインコンテンツ：3カラム構造 -->
     <main>
         <div class="project-detail-container">
-            <!-- 左カラム: プロジェクト記号やナンバー -->
+            <!-- 左カラム -->
             <div class="project-label">Project.01</div>
             
-            <!-- 中央カラム: 思想・コンセプト解説（自由にコピペして変更可能） -->
+            <!-- 中央カラム -->
             <div class="project-main-text">
                 <h2 class="project-title">
-                    <!-- [書き換えポイント②: プロジェクトタイトル] -->
                     Project No.01 / Design Conception
                 </h2>
                 <p class="project-desc">
-                    <!-- [書き換えポイント③: プロジェクト紹介文] -->
                     ここにプロジェクトの紹介や、デザインのコンセプチュアルな解説テキストを記述します。
                     余白を贅沢に活かした静かな構成が、クリエイションの深度を伝えます。<br><br>
                     素材の質感が語りかける言葉と、緻密に計算された極小の尺度が交差するとき、そこには新しい調和の空間が生まれます。scaL_TONEが追求する、機能的ミニマリズムの極致をここから発信します。
                 </p>
             </div>
 
-            <!-- 右カラム: リファレンス画像にあったような等幅フォントによる美しいテクニカルスペックテーブル -->
+            <!-- 右カラムスペックテーブル -->
             <div class="project-spec-area">
-                <!-- 
-                     [書き換えポイント④: スペックデータ一覧]
-                     アイテム名（spec-label）や数値（spec-val）を書き換える、
-                     あるいは不要な行を削除して自由にお使いください。
-                -->
                 <div class="spec-item">
                     <span class="spec-label">PROJECT NAME</span>
                     <span class="spec-val">scaL_TONE Studio</span>
@@ -268,10 +275,32 @@
         </div>
     </main>
 
-    <!-- フッター：他ページと調和する、WORKS一覧へのスマートなリターンリンク -->
+    <!-- フッター：確実に戻れるように `./works.html` の相対パスへ補正 -->
     <footer>
-        <a href="works.html" class="back-link">Back to works</a>
+        <a href="./works.html" class="back-link">Back to works</a>
     </footer>
 
+    <!-- スムーズな遷移を可能にするJavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const backLink = document.querySelector('.back-link');
+            if (backLink) {
+                backLink.addEventListener('click', function(e) {
+                    // 通常のブラウザの即時ジャンプをキャンセル
+                    e.preventDefault();
+                    
+                    const targetUrl = this.getAttribute('href');
+                    
+                    // ページ全体を優雅にフェードアウト
+                    document.body.classList.add('page-fade-out');
+                    
+                    // アニメーション時間（0.5秒）を待ってから、確実にリンク先へジャンプ
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 500);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
