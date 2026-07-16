@@ -29,11 +29,15 @@
             position: relative;
         }
 
-        /* 1. 中央のロゴ（初期状態：心臓の拍動アニメーション） */
+        /* 1. 中央のロゴ（初期フェードイン ➡ ゆったりとした拍動へ） */
         .logo-wrapper {
             display: inline-block;
             margin-bottom: 50px;
-            transition: margin-bottom 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            /* 起動時：1.8秒かけてフェードイン ➡ 1.8秒後から3.5秒周期の深い鼓動を開始 */
+            animation: fadeInLogo 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards, 
+                       heartbeat 3.5s infinite ease-in-out 1.8s;
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
         
         .logo {
@@ -41,12 +45,10 @@
             width: 100%;
             height: auto;
             cursor: pointer;
-            /* 心臓の拍動アニメーション（無限ループ） */
-            animation: heartbeat 2.0s infinite ease-in-out;
-            transition: transform 0.5s ease;
+            display: block;
         }
 
-        /* 2. ナビゲーションメニュー（最初は非表示、かつクリック不可） */
+        /* 2. ナビゲーションメニュー */
         .nav-menu {
             display: flex;
             justify-content: center;
@@ -54,26 +56,42 @@
             gap: 32px;
             list-style: none;
             width: 100%;
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(0.9);
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
 
-        /* メニュー項目のスタイル */
+        /* 各ナビゲーション項目（初期状態：ロゴの中心に重なって完全に隠れている） */
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-decoration: none;
             color: #111111;
-            transition: transform 0.3s ease, opacity 0.5s ease;
             cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            
+            /* 初期位置：ロゴの中心（上方向へ120pxオフセットして重なる） */
+            transform: translateY(-120px) scale(0) rotate(15deg);
+            /* 飛び出す際のスプリング感（イージング）を設定 */
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                        opacity 0.6s ease;
+        }
+
+        /* 放射状に飛び出すための各項目の初期角度と位置の微調整 */
+        .nav-item:nth-child(1) { --dx: 150px;  --rotate: -20deg; transition-delay: 0.0s; } /* ABOUT */
+        .nav-item:nth-child(2) { --dx: 75px;   --rotate: -10deg; transition-delay: 0.05s; } /* SHOP */
+        .nav-item:nth-child(3) { --dx: 0px;    --rotate: 0deg;   transition-delay: 0.1s; }  /* NEWS */
+        .nav-item:nth-child(4) { --dx: -75px;  --rotate: 10deg;  transition-delay: 0.15s; } /* WORKS */
+        .nav-item:nth-child(5) { --dx: -150px; --rotate: 20deg;  transition-delay: 0.2s; }  /* CONTACT */
+
+        /* 初期非アクティブ時の位置を個別定義（ロゴの中心に収束） */
+        .nav-item {
+            transform: translate(var(--dx), -120px) scale(0) rotate(var(--rotate));
         }
 
         /* ホバー時の緩やかな浮き上がり */
         .nav-item:hover {
-            transform: translateY(-2px);
+            transform: translate(0, -4px) scale(1.05) !important;
         }
 
         /* アイコン画像の設定 */
@@ -95,70 +113,55 @@
 
         /* --- 状態変更用クラス (JavaScriptで制御) --- */
 
-        /* ロゴをクリックした後のレイアウト調整 */
+        /* ロゴタップ後：鼓動を止め、ナビゲーションを放射状に展開 */
         .activated .logo-wrapper {
-            margin-bottom: 50px; /* 位置を定位置に固定 */
-        }
-        
-        /* 拍動アニメーションを止める */
-        .activated .logo {
             animation: none;
-            transform: scale(1);
+            opacity: 1;
         }
 
-        /* ナビゲーションを飛び出させて表示する */
-        .activated .nav-menu {
+        .activated .nav-item {
             opacity: 1;
             pointer-events: auto;
-            transform: scale(1);
+            /* 定位置（オフセットなし）へバネのように弾けて着地 */
+            transform: translate(0, 0) scale(1) rotate(0deg);
         }
 
-        /* ページ遷移時の演出：クリックされたアイコンは一回転して消える */
+        /* ページ遷移時：クリックされたメニューアイコンが一回転しながらフェードアウト */
         .nav-item.clicked .nav-icon {
-            transform: rotate(360deg) scale(0.8);
+            transform: rotate(360deg) scale(0);
             opacity: 0;
         }
 
-        /* ページ遷移時の演出：クリックされなかった他の項目はフェードアウト */
+        /* ページ遷移時：クリックされなかった他のメニューは静かにフェードアウト */
         .nav-item.fade-out {
             opacity: 0 !important;
-            transform: translateY(4px);
+            transform: translateY(10px) scale(0.9);
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-        /* ページ遷移時：中央のロゴも一緒にフェードアウト */
+        /* ページ遷移時：ロゴも一緒にフェードアウト */
         .logo-wrapper.fade-out {
             opacity: 0;
             transform: translateY(-10px);
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-        /* 心臓の拍動（鼓動）アニメーション */
+        /* --- アニメーション定義 --- */
+
+        /* 起動時のロゴフェードイン */
+        @keyframes fadeInLogo {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 3.5秒周期の深くゆったりとした鼓動（心拍） */
         @keyframes heartbeat {
-            0% {
-                transform: scale(1);
-                opacity: 0.85;
-            }
-            14% {
-                transform: scale(1.08);
-                opacity: 1;
-            }
-            28% {
-                transform: scale(1);
-                opacity: 0.85;
-            }
-            42% {
-                transform: scale(1.08);
-                opacity: 1;
-            }
-            70% {
-                transform: scale(1);
-                opacity: 0.85;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 0.85;
-            }
+            0% { transform: scale(1); opacity: 0.8; }
+            12% { transform: scale(1.05); opacity: 1; }
+            24% { transform: scale(1); opacity: 0.8; }
+            36% { transform: scale(1.05); opacity: 1; }
+            60% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 0.8; }
         }
     </style>
 </head>
@@ -197,15 +200,14 @@
         const logo = document.getElementById('logo');
         const logoWrap = document.getElementById('logo-wrap');
 
-        // 1. ロゴクリック時の「メニュー飛び出し（アクティベート）」処理
+        // 1. ロゴクリック時に放射状にメニューをポップアップさせる
         logo.addEventListener('click', function() {
             if (!container.classList.contains('activated')) {
-                // アクティブ用クラスを付与してナビゲーションを展開
                 container.classList.add('activated');
             }
         });
 
-        // 2. 各メニューをクリックした時の「ページ遷移」処理
+        // 2. メニュークリック時に回転＆フェードアウトして遷移
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -213,7 +215,7 @@
                 const targetUrl = this.getAttribute('href');
                 const allItems = document.querySelectorAll('.nav-item');
 
-                // ロゴと他の項目をスムーズに消去
+                // 他のメニューとロゴを即座にフェードアウト
                 allItems.forEach(el => {
                     if (el !== this) {
                         el.classList.add('fade-out');
@@ -221,10 +223,10 @@
                 });
                 logoWrap.classList.add('fade-out');
 
-                // 自分自身を回転フェードアウト
+                // クリックされたメニューアイコン自身を回転縮小消去
                 this.classList.add('clicked');
 
-                // アニメーション完了後に遷移
+                // アニメーション完了（0.6秒）後にページ遷移
                 setTimeout(() => {
                     window.location.href = targetUrl;
                 }, 600);
