@@ -50,7 +50,7 @@
             padding: 45px 0; 
             border-top: 1px solid #eeeeee; 
             width: 100%;
-            /* 安全対策：標準で表示状態にしておき、アニメーションを上から重ねます */
+            align-items: center; /* 縦方向の位置をテキストの高さに揃える（中央揃え） */
             animation: fadeInPage 0.8s ease-out;
         }
         
@@ -62,6 +62,7 @@
             color: #888888; 
             text-transform: uppercase; 
             font-weight: 500;
+            align-self: start; /* ラベルは上部で固定します */
         }
         
         /* 中央カラム：コンテンツ（COMING SOON） */
@@ -91,12 +92,16 @@
             grid-column: 8 / 13;
             overflow: hidden;
             display: flex;
-            align-items: flex-start;
+            align-items: center; /* 内部の画像を上下中央揃えに */
+            justify-content: center;
+            max-height: 280px; /* テキスト全体の高さに合わせるための最大の高さ制限 */
         }
 
         .shop-image img {
             width: 100%;
-            height: auto;
+            height: 100%;
+            max-height: 280px; /* 画像が大きくなりすぎないように制限 */
+            object-fit: contain; /* 横縦比率を美しく保ったまま枠にフィットさせる */
             display: block;
             filter: grayscale(100%);
             transition: filter 0.5s ease;
@@ -129,7 +134,7 @@
             opacity: 0.5;
         }
         
-        /* フェードインアニメーション（初期状態を隠さない安全設計） */
+        /* フェードインアニメーション */
         @keyframes fadeInPage {
             0% { opacity: 0; transform: translateY(8px); }
             100% { opacity: 1; transform: translateY(0); }
@@ -147,7 +152,11 @@
             }
             .shop-image {
                 margin-top: 20px;
-                order: -1;
+                order: -1; /* スマホ表示では画像がテキストの上に来るように */
+                max-height: none;
+            }
+            .shop-image img {
+                max-height: 300px;
             }
         }
     </style>
@@ -183,4 +192,3 @@
 
 </body>
 </html>
-
