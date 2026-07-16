@@ -3,339 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>scaL_TONE | CONTACT</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Azeret+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>CONTACT | scaL_TONE</title>
     <style>
-        /* 1. SETUP & THEME VARIABLES (Theme_3 Warm Cream / Analog Minimal) */
-        :root {
-            --bg-color: #fff3dd;       /* 温かみのあるオフホワイト・クリーム */
-            --bg-accent: #fffaf1;     /* フォームやコンテナの内側用、より明るいクリーム */
-            --panel-color: #f4f0e6;   /* 微妙なライトグレーを帯びたベージュ */
-            --border-color: #3c4043;  /* 境界線：繊細で構造的なダークグレー */
-            --text-primary: #111111;  /* 主要テキスト */
-            --text-secondary: #555555;/* 副次テキスト */
-            --text-muted: #888888;    /* ラベル・注釈用 */
-            --font-sans: 'Arimo', sans-serif;
-            --font-mono: 'Azeret Mono', monospace;
-            --transition-speed: 0.3s;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            background-color: #ffffff; 
+            color: #111111; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            padding: 40px 20px 100px; 
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        
+        header { 
+            max-width: 1200px; 
+            margin: 0 auto 80px; 
+            display: flex; 
+            justify-content: flex-end; 
         }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            font-family: var(--font-sans);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* 背景のアブストラクトなソフト円形グラデーション装飾 */
-        body::before {
-            content: '';
-            position: absolute;
-            top: -200px;
-            right: -200px;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 75%);
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        header, main, footer {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* 2. HEADER */
-        header {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -1px;
-            color: var(--text-primary);
-            text-decoration: none;
-            transition: opacity var(--transition-speed);
-        }
-
-        .logo:hover {
-            opacity: 0.7;
-        }
-
-        .page-indicator {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 2px;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--text-primary);
-            padding-bottom: 4px;
+        
+        .current-page { 
+            font-size: 10px; 
+            letter-spacing: 0.2em; 
+            font-weight: 700; 
+            border-bottom: 1px solid #111; 
+            padding-bottom: 4px; 
             text-transform: uppercase;
         }
-
-        /* 3. MAIN CONTENT (Contact Form Section) */
-        main {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
+        
+        /* 3カラムグリッドコンテナ */
+        .contact-container { 
+            display: grid; 
+            grid-template-columns: repeat(12, 1fr); 
+            gap: 20px; 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            padding: 45px 0; 
+            border-top: 1px solid #eeeeee; 
+        }
+        
+        /* 左：ラベル（Input） */
+        .contact-label { 
+            grid-column: 1 / 3; 
+            font-size: 10px; 
+            letter-spacing: 0.1em; 
+            color: #888888; 
+            text-transform: uppercase; 
+        }
+        
+        /* 中央：コンテンツエリア */
+        .contact-content { 
+            grid-column: 3 / 8; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 30px; 
+        }
+        
+        /* 右：余白スペース */
+        .contact-right-space {
+            grid-column: 8 / 13;
+        }
+        
+        .form-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+        }
+        
+        .form-group label { 
+            font-size: 10px; 
+            font-weight: 700; 
+            letter-spacing: 0.1em;
+        }
+        
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #e0e0e0; 
+            font-size: 14px; 
+            background-color: #fafafa; 
+            outline: none; 
+            font-family: inherit;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #111111;
+            background-color: #ffffff;
         }
 
-        .contact-container {
-            width: 100%;
-            max-width: 720px;
-            background-color: var(--bg-accent);
-            border: 1px solid var(--border-color);
-            border-radius: 30px;
-            padding: 60px 50px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-        }
-
-        .form-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .form-header h1 {
-            font-size: 42px;
-            font-weight: 400;
-            letter-spacing: -1.5px;
-            margin-bottom: 10px;
-        }
-
-        .form-header p {
-            font-family: var(--font-mono);
-            font-size: 14px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* FORM ELEMENTS */
-        .form-group {
-            margin-bottom: 25px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 1.5px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .form-control {
-            font-family: var(--font-sans);
-            font-size: 16px;
-            padding: 15px 20px;
-            background-color: var(--bg-color);
-            border: 1px solid #d3cdbf;
-            border-radius: 12px;
-            color: var(--text-primary);
-            outline: none;
-            transition: border-color var(--transition-speed), background-color var(--transition-speed);
-        }
-
-        .form-control:focus {
-            border-color: var(--text-primary);
-            background-color: #fffaf1;
-        }
-
-        select.form-control {
-            appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233c4043' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
-            background-repeat: no-repeat;
-            background-position: right 20px center;
-            background-size: 16px;
-            padding-right: 50px;
-            cursor: pointer;
-        }
-
-        textarea.form-control {
+        textarea {
             resize: vertical;
-            min-height: 150px;
+            min-height: 120px;
         }
-
-        /* 4. BUTTONS - DOUBLE CENTERED ALIGNMENT SYSTEM */
-        .form-actions {
+        
+        /* ボタンエリア：中央揃えの設定（confirm画面と完全統一） */
+        .btn-wrapper {
+            margin-top: 10px;
+            width: 100%;
             display: flex;
             justify-content: center;
-            align-items: center;
-            gap: 20px;             /* ボタン同士の間隔 */
-            margin-top: 45px;
-            width: 100%;
+            gap: 40px; /* ボタン同士の間隔 */
         }
 
-        .btn {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            text-decoration: none;
-            padding: 18px 35px;
-            border-radius: 50px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
-            min-width: 180px;      /* 左右のボタン幅を美しく揃えるための最小幅 */
+        .btn { 
+            display: inline-block; 
+            font-size: 11px; 
+            letter-spacing: 0.15em; 
+            border: none;
+            background: none;
+            border-bottom: 1px solid #111; 
+            padding-bottom: 4px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            color: #111111;
+            text-decoration: none; /* Aタグの標準下線を消す */
+            transition: opacity 0.3s;
+        }
+        
+        .btn:hover {
+            opacity: 0.5;
         }
 
-        /* BACK / HOMEに戻るボタン (二次・アウトラインスタイル) */
+        /* BACKボタンのスタイルを控えめ（グレー）に（confirm画面と統一） */
         .btn-back {
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
+            color: #888888;
+            border-bottom: 1px solid #888888;
         }
-
-        .btn-back:hover {
-            background-color: var(--panel-color);
-            transform: translateY(-2px);
-        }
-
-        /* CONFIRMページに進むボタン (一次・ソリッドスタイル) */
-        .btn-confirm {
-            background-color: var(--text-primary);
-            border: 1px solid var(--text-primary);
-            color: var(--bg-color);
-        }
-
-        .btn-confirm:hover {
-            background-color: transparent;
-            color: var(--text-primary);
-            transform: translateY(-2px);
-        }
-
-        /* 5. FOOTER */
-        footer {
-            width: 100%;
-            padding: 30px 20px;
-            text-align: center;
-            border-top: 1px solid var(--panel-color);
-            background-color: rgba(244, 240, 230, 0.3);
-        }
-
-        .footer-copyright {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-        }
-
-        /* Responsive Settings */
-        @media (max-width: 768px) {
-            .contact-container {
-                padding: 40px 25px;
-            }
-            .form-actions {
-                flex-direction: column; /* スマホ画面では1列にスタックし、押しやすくする */
-                gap: 15px;
-            }
-            .btn {
-                width: 100%;
+        
+        @media (max-width: 768px) { 
+            .contact-container { 
+                display: flex; 
+                flex-direction: column; 
+                gap: 30px;
+            } 
+            .contact-label {
+                margin-bottom: 10px;
             }
         }
     </style>
 </head>
 <body>
-
-    <!-- ヘッダーセクション -->
     <header>
-        <a href="index.html" class="logo">scaL_TONE</a>
-        <div class="page-indicator">Contact</div>
+        <div class="current-page">CONTACT</div>
     </header>
-
-    <!-- メインコンテンツセクション -->
     <main>
-        <section class="contact-container">
-            <div class="form-header">
-                <h1>Contact Us</h1>
-                <p>Start a Conversation</p>
-            </div>
-
-            <!-- Formspreeを用いたモック/本番用の高品位なフォーム構造 -->
-            <form action="contact-confirm.html" method="POST">
-                
-                <!-- お問い合わせ種別選択 -->
+        <form action="contact-confirm.html" method="GET" class="contact-container">
+            <!-- 左カラム -->
+            <div class="contact-label">Input</div>
+            
+            <!-- 中央カラム -->
+            <div class="contact-content">
                 <div class="form-group">
-                    <label for="inquiry-type" class="form-label">Inquiry Type</label>
-                    <select id="inquiry-type" name="type" class="form-control" required>
-                        <option value="" disabled selected>Select an option...</option>
-                        <option value="project">New Project Proposal</option>
-                        <option value="collaboration">Brand Collaboration</option>
-                        <option value="press">Press / Media Inquiry</option>
-                        <option value="other">General / Technical Support</option>
+                    <label>Inquiry Type</label>
+                    <select name="type" required>
+                        <option value="" disabled selected>選択してください</option>
+                        <option value="ご依頼">ご依頼</option>
+                        <option value="見積もり相談">見積もり相談</option>
+                        <option value="その他">その他</option>
                     </select>
                 </div>
-
-                <!-- お名前 -->
+                
                 <div class="form-group">
-                    <label for="name" class="form-label">Your Name</label>
-                    <input type="text" id="name" name="name" class="form-control" placeholder="John Doe" required>
+                    <label>Name</label>
+                    <input type="text" name="name" required placeholder="お名前を入力してください">
                 </div>
-
-                <!-- メールアドレス -->
+                
                 <div class="form-group">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="example@domain.com" required>
+                    <label>Email</label>
+                    <input type="email" name="email" required placeholder="example@gmail.com">
                 </div>
-
-                <!-- 本文 -->
+                
                 <div class="form-group">
-                    <label for="message" class="form-label">Your Message</label>
-                    <textarea id="message" name="message" class="form-control" placeholder="Describe your vision or inquiry details here..." required></textarea>
+                    <label>Message</label>
+                    <textarea name="message" required placeholder="内容を入力してください"></textarea>
                 </div>
+                
+                <!-- ボタンエリア：BACK（HOMEへ戻る）とCONFIRM（進む）を中央に並列化 -->
+                <div class="btn-wrapper">
+                    <a href="index.html" class="btn btn-back">BACK</a>
+                    <button type="submit" class="btn">CONFIRM</button>
+                </div>
+            </div>
 
-                <!-- ボタンレイアウト：ご指定に基づき、2つのアクションボタンを美しく中央に並べる -->
-                <div class="form-actions">
-                    <!-- 左側：HOME（BACK）ボタン -->
-                    <a href="index.html" class="btn btn-back">
-                        <i class="fa-solid fa-arrow-left"></i> Back to Home
-                    </a>
-                    
-                    <!-- 右側：CONFIRM（送信確認）ボタン -->
-                    <button type="submit" class="btn btn-confirm">
-                        Confirm <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-            </form>
-        </section>
+            <!-- 右カラム -->
+            <div class="contact-right-space"></div>
+        </form>
     </main>
-
-    <!-- フッターセクション -->
-    <footer>
-        <div class="footer-copyright">
-            © 2026 scaL_TONE. All rights reserved.
-        </div>
-    </footer>
-
 </body>
 </html>
-
