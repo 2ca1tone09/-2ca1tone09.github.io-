@@ -5,42 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ABOUT | scaL_TONE</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #ffffff;
-            color: #111111;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            background-color: #ffffff; 
+            color: #111111; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            padding: 40px 20px 100px; 
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            padding: 40px;
+            justify-content: space-between;
         }
-        .content {
-            text-align: center;
-            max-width: 500px;
+        
+        /* 1. 右上のページ表示（他ページと完全統一） */
+        header { 
+            max-width: 1200px; 
+            margin: 0 auto 80px; 
+            display: flex; 
+            justify-content: flex-end; 
+            width: 100%;
+        }
+        
+        .current-page { 
+            font-size: 10px; 
+            letter-spacing: 0.2em; 
+            font-weight: 700; 
+            border-bottom: 1px solid #111111; 
+            padding-bottom: 4px; 
+            text-transform: uppercase;
+        }
+        
+        /* 2. 3カラムグリッドコンテナ */
+        .about-container { 
+            display: grid; 
+            grid-template-columns: repeat(12, 1fr); 
+            gap: 20px; 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            padding: 45px 0; 
+            border-top: 1px solid #eeeeee; 
+            width: 100%;
             opacity: 0;
-            animation: fadeInPage 1.5s ease-out forwards;
+            animation: fadeInPage 1.2s ease-out forwards;
         }
-        h1 {
-            font-size: 18px;
-            letter-spacing: 0.2em;
-            margin-bottom: 30px;
+        
+        /* 左カラム：セクションラベル */
+        .about-label { 
+            grid-column: 1 / 3; 
+            font-size: 10px; 
+            letter-spacing: 0.1em; 
+            color: #888888; 
+            text-transform: uppercase; 
+            font-weight: 500;
+        }
+        
+        /* 中央カラム：ブランド紹介・テキストコンテンツ */
+        .about-content { 
+            grid-column: 3 / 8; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 24px; 
+        }
+        
+        .brand-name {
+            font-size: 16px;
             font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #111111;
         }
-        p {
+
+        .about-text {
             font-size: 14px;
-            line-height: 2;
+            line-height: 2.0;
             letter-spacing: 0.05em;
-            color: #555555;
-            margin-bottom: 40px;
+            color: #333333;
         }
-        /* トップページへ戻るリンク */
+
+        /* 右カラム：ブランドイメージ画像エリア（小文字の assets フォルダを使用） */
+        .about-image {
+            grid-column: 8 / 13;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: grayscale(100%); /* モノクロにしてサイトの空気感を統一 */
+            transition: filter 0.5s ease;
+        }
+
+        .about-image img:hover {
+            filter: grayscale(0%);
+        }
+        
+        /* 3. 最下部のBack to home（他ページと完全統一） */
+        footer {
+            margin-top: 100px;
+            text-align: center;
+            width: 100%;
+        }
+
         .back-link {
             display: inline-block;
             font-size: 11px;
@@ -50,25 +118,72 @@
             border-bottom: 1px solid #111111;
             padding-bottom: 4px;
             transition: opacity 0.3s ease;
+            text-transform: uppercase;
         }
+        
         .back-link:hover {
             opacity: 0.5;
         }
-
+        
+        /* フェードインアニメーション */
         @keyframes fadeInPage {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* モバイル対応（3カラムを縦並びに） */
+        @media (max-width: 768px) { 
+            .about-container { 
+                display: flex; 
+                flex-direction: column; 
+                gap: 30px;
+            } 
+            .about-label {
+                margin-bottom: 10px;
+            }
+            .about-image {
+                margin-top: 20px;
+                order: -1; /* スマホ表示では画像がテキストの上に来るように */
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="content">
-        <h1>ABOUT</h1>
-        <p>
-            ここにブランドのコンセプトや、紹介文テキストを記述します。<br>
-            余白を活かした静かなデザインがブランドを引き立てます。
-        </p>
-        <a href="index.html" class="back-link">BACK TO HOME</a>
-    </div>
+
+    <!-- ヘッダー：右上の現在地 -->
+    <header>
+        <div class="current-page">ABOUT</div>
+    </header>
+
+    <!-- メインコンテンツ：3カラム構造 -->
+    <main>
+        <div class="about-container">
+            <!-- 左カラム -->
+            <div class="about-label">Concept</div>
+            
+            <!-- 中央カラム -->
+            <div class="about-content">
+                <h2 class="brand-name">scaL_TONE</h2>
+                <p class="about-text">
+                    Scal_tone ｜ スケルトン<br>
+                    建築、インテリア、ファッション。<br>
+                    人の営みを包み込むあらゆる「Scale」を、<br>
+                    様々な「Tone」で描き出すデザインブランド。<br>
+                </p>
+            </div>
+
+            <!-- 右カラム：ブランドイメージ（/assets からの参照） -->
+            <div class="about-image">
+                <!-- assetsフォルダに about_main.png を配置するか、お好きな画像名に書き換えてください -->
+                <img src="/assets/about_main.png" alt="scaL_TONE Visual" onerror="this.style.display='none';">
+            </div>
+        </div>
+    </main>
+
+    <!-- フッター：ホームへ戻る -->
+    <footer>
+        <a href="index.html" class="back-link">Back to home</a>
+    </footer>
+
 </body>
 </html>
