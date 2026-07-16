@@ -98,9 +98,9 @@
             transform: scale(1.04); 
         }
         
-        /* 建築学生時代の課題・ポートフォリオ用の特別な固定スタイル (最下部で抜群の存在感を放ちます) */
+        /* 建築学生時代の課題・ポートフォリオ用の特別な固定スタイル (全体に調和するサイズへ控えめに調整) */
         .portfolio-item {
-            grid-column: 2 / 12 !important; /* 中央に広く大きく配置 */
+            grid-column: 3 / 11 !important; /* 中央に程よい存在感で美しく収まるサイズ（10スパンから8スパンに変更） */
             margin-top: 80px !important;
             margin-bottom: 0px !important;
         }
@@ -218,16 +218,16 @@
             const items = Array.from(grid.querySelectorAll('.work-item:not(.portfolio-item)'));
             const portfolioItem = grid.querySelector('.portfolio-item');
 
-            // 12カラムの非対称デザイングリッドに適用する、美しく計算されたレイアウトパターン
+            // 【画像縮小アップデート】最大幅を制限した、上品で引き締まったレイアウトパターン
             const layoutPatterns = [
-                { gridColumn: '1 / 7', marginTop: '0px' },       // パターンA: 左側に広く（1〜6列目）
-                { gridColumn: '8 / 12', marginTop: '-40px' },    // パターンB: 右側にキュッと（8〜11列目）上に少しズラす
-                { gridColumn: '3 / 11', marginTop: '50px' },     // パターンC: 中央に雄大に（3〜10列目）
-                { gridColumn: '1 / 6', marginTop: '20px' },      // パターンD: 左に少しコンパクトに（1〜5列目）
-                { gridColumn: '7 / 13', marginTop: '-20px' },    // パターンE: 右にスタイリッシュに（7〜12列目）
-                { gridColumn: '4 / 10', marginTop: '60px' },     // パターンF: 中央寄りに細め（4〜9列目）
-                { gridColumn: '2 / 8', marginTop: '10px' },      // パターンG: やや左寄り（2〜7列目）
-                { gridColumn: '9 / 13', marginTop: '-30px' }     // パターンH: 右端にタイトに（9〜12列目）
+                { gridColumn: '2 / 7', marginTop: '0px' },       // パターンA: 5カラム幅（左寄り、1カラム空け）
+                { gridColumn: '8 / 11', marginTop: '-40px' },    // パターンB: 3カラム幅（右寄り、適度なタイトさ）
+                { gridColumn: '4 / 10', marginTop: '50px' },     // パターンC: 6カラム幅（中央寄り、余白を広く）
+                { gridColumn: '2 / 6', marginTop: '20px' },      // パターンD: 4カラム幅
+                { gridColumn: '8 / 12', marginTop: '-20px' },    // パターンE: 4カラム幅
+                { gridColumn: '5 / 9', marginTop: '60px' },      // パターンF: 4カラム幅（中央、左右に広い静寂）
+                { gridColumn: '3 / 7', marginTop: '10px' },      // パターンG: 4カラム幅
+                { gridColumn: '9 / 12', marginTop: '-30px' }     // パターンH: 3カラム幅
             ];
 
             // パターン配列をランダムにシャッフルするアルゴリズム
