@@ -20,12 +20,12 @@
             position: relative;
         }
         
-        /* 左端にメニューボタン、右端に現在地表示を完璧に両立させるヘッダー */
+        /* 1. 左端にメニューボタンを固定したため、右端の現在地表示を担保するヘッダー */
         header { 
             max-width: 1200px; 
             margin: 0 auto 80px; 
             display: flex; 
-            justify-content: space-between; /* 左右に等しく展開 */
+            justify-content: flex-end; /* 右端のみに寄せて美しく対比させる */
             align-items: center;
             width: 100%;
             z-index: 100;
@@ -41,8 +41,15 @@
         }
 
         /* */
-        /* ミニマルなハンバーガーメニュー・トリガー（menu1.png ⇄ menu2.png プレミアム・クロスフェード） */
+        /* 
+           【極上レスポンシブ固定（追従）メニューボタン】
+           スクロールしても左上に追従。
+           画面最大幅1200pxの左端にピタリとシンクロし、スマホ等では端から20pxの美しい位置をキープ。
+        */
         .menu-trigger {
+            position: fixed;
+            top: 40px;
+            left: max(20px, calc(50% - 600px));
             background: none;
             border: none;
             cursor: pointer;
@@ -51,7 +58,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
             z-index: 1100; /* サイドバーよりも手前に表示 */
         }
 
@@ -128,7 +134,6 @@
             gap: 22px;
         }
 
-        /* */
         .sidebar-item {
             display: flex;
             align-items: center;
@@ -156,6 +161,13 @@
             transform: scale(1.1);
         }
 
+        /* */
+        /* 【特注】HOMEアイコンのみ、お預かりしているサイズ感を活かすために少し大きめに調整 */
+        .sidebar-item.home-link .sidebar-icon {
+            width: 22px;
+            height: 22px;
+        }
+
         /* 
            【文字下のアンダーバーが少し伸びるホバー効果】
            カンプにあるアンダーバーの美学を踏襲し、
@@ -164,12 +176,17 @@
         .sidebar-item::after {
             content: '';
             position: absolute;
-            left: 28px; /* アイコンの幅を除いたテキスト位置に揃える */
+            left: 28px; /* アイコンの幅(16px) + ギャップ(12px)に揃える */
             bottom: 0;
             width: 20px; /* 通常時の長さ */
             height: 1px;
             background-color: #111111;
-            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), left 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* HOMEのみアイコンサイズ拡大に伴って線の開始位置を右へオフセット */
+        .sidebar-item.home-link::after {
+            left: 34px; /* アイコンの幅(22px) + ギャップ(12px)に揃える */
         }
 
         .sidebar-item:hover::after {
@@ -329,13 +346,12 @@
 </head>
 <body>
 
-    <!-- -->
     <!-- 背景の薄暗いオーバーレイレイヤー -->
     <div class="menu-backdrop" id="menu-backdrop"></div>
 
-    <!-- ヘッダー：左上に画像変形メニュー、右上に現在地表示 -->
+    <!-- ヘッダー：右上に現在地表示（メニューボタンはfixed化したため、位置調整） -->
     <header>
-        <!-- menu1.png ⇄ menu2.png プレミアム変形メニューボタン -->
+        <!-- menu1.png ⇄ menu2.png プレミアム変形メニューボタン（fixedで画面に完全追従） -->
         <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
             <img src="/assets/menu1.png" alt="Open Menu" class="menu-icon icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
             <img src="/assets/menu2.png" alt="Close Menu" class="menu-icon icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
@@ -358,9 +374,9 @@
                 もし画像がまだアップロードされていない場合でも、onerrorによってデザイン崩れを防ぐプレースホルダーが自動的に作動します。
             -->
             
-            <!-- HOME -->
-            <a href="index.html" class="sidebar-item">
-                <img class="sidebar-icon" src="/assets/logo3.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=H';" alt="">
+            <!-- HOME (特注：home-linkクラスを追加してアイコンを大きめに調整) -->
+            <a href="index.html" class="sidebar-item home-link">
+                <img class="sidebar-icon" src="/assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/ffffff?text=H';" alt="">
                 HOME
             </a>
             <!-- ABOUT (Active) -->
@@ -391,6 +407,7 @@
         </nav>
     </aside>
 
+    <!-- -->
     <!-- メインコンテンツ：3カラム構造 -->
     <main>
         <div class="about-container" id="main-content">
