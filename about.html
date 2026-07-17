@@ -334,6 +334,15 @@
             opacity: 0.5;
         }
         
+        /* 
+           【超重要：復元したフェードインアニメーション】
+           これが無かったため、opacity: 0 のまま画面が表示されなくなっていました。確実に復元完了。
+        */
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* モバイル対応（3カラムを縦並びに） */
         @media (max-width: 768px) { 
             .about-container { 
