@@ -16,15 +16,19 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            overflow-x: hidden;
+            position: relative;
         }
         
-        /* 1. 右上のページ表示（他ページと完全統一） */
+        /* 左端にメニューボタン、右端に現在地表示を完璧に両立させるヘッダー */
         header { 
             max-width: 1200px; 
             margin: 0 auto 80px; 
             display: flex; 
-            justify-content: flex-end; 
+            justify-content: space-between; /* 左右に等しく展開 */
+            align-items: center;
             width: 100%;
+            z-index: 100;
         }
         
         .current-page { 
@@ -35,7 +39,161 @@
             padding-bottom: 4px; 
             text-transform: uppercase;
         }
-        
+
+        /* ミニマルなハンバーガーメニュー・トリガー */
+        .menu-trigger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1100; /* サイドバーよりも手前に表示 */
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* 三本バーのベーススタイル（MENU_アートボード 1.png を参考に微細な厚みと丸みを設定） */
+        .menu-trigger .bar {
+            width: 26px;
+            height: 3.5px;
+            background-color: #111111;
+            position: absolute;
+            border-radius: 1px;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
+                        background-color 0.4s ease;
+        }
+
+        /* 初期位置配置 */
+        .menu-trigger .bar-1 { transform: translateY(-7px); }
+        .menu-trigger .bar-2 { transform: translateY(0); }
+        .menu-trigger .bar-3 { transform: translateY(7px); }
+
+        /* 
+           【極上モーフィング】
+           クリック時に3本の直線が角度120度ずつに回転・配置され、
+           中央の一点から三方に突き出た「テトラポット（Y型）」へ変形する高度な幾何学トランスフォーム。
+        */
+        .menu-trigger.active .bar-1 {
+            /* 左上の枝に変形 */
+            transform: rotate(-120deg) translate(0px, 3.5px) scaleY(0.9);
+            background-color: #111111;
+        }
+        .menu-trigger.active .bar-2 {
+            /* 右上の枝に変形 */
+            transform: rotate(120deg) translate(0px, 3.5px) scaleY(0.9);
+            background-color: #111111;
+        }
+        .menu-trigger.active .bar-3 {
+            /* 真下の枝に変形 */
+            transform: rotate(90deg) translate(0px, -7px) scaleY(0.9);
+            background-color: #111111;
+        }
+
+        /* 15〜20%の割合を占めるスライドイン・サイドバー（MENU-02.pngの完全再現） */
+        .sidebar-menu {
+            position: fixed;
+            top: 0;
+            left: -260px; /* 初期状態は画面外に隠蔽 */
+            width: 240px;
+            height: 100vh;
+            background-color: #eaeaea; /* カンプ通りのマットなライトグレー */
+            z-index: 1000;
+            padding: 120px 30px 40px; /* 上部にテトラポットボタンの余白を担保 */
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
+        }
+
+        .sidebar-menu.open {
+            left: 0; /* 滑らかに出現 */
+        }
+
+        /* サイドバー内のリンク構造 */
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #111111;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 6px 0;
+            position: relative;
+        }
+
+        /* カンプに描かれた精緻な幾何学アイコン */
+        .sidebar-icon {
+            width: 16px;
+            height: 16px;
+            fill: #111111;
+            opacity: 0.9;
+            transition: transform 0.4s ease;
+        }
+
+        .sidebar-item:hover .sidebar-icon {
+            transform: scale(1.1);
+        }
+
+        /* 
+           【文字下のアンダーバーが少し伸びるホバー効果】
+           カンプにあるアンダーバーの美学を踏襲し、
+           ホバーすると細い線が静かに右側に少し伸びる、繊細でプレミアムな仕掛け。
+        */
+        .sidebar-item::after {
+            content: '';
+            position: absolute;
+            left: 28px; /* アイコンの幅を除いたテキスト位置に揃える */
+            bottom: 0;
+            width: 20px; /* 通常時の長さ */
+            height: 1px;
+            background-color: #111111;
+            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .sidebar-item:hover::after {
+            width: 44px; /* ホバー時に少し伸びる */
+        }
+
+        /* アクティブなページ（ABOUT）の識別マーク */
+        .sidebar-item.active-link::after {
+            width: 44px; /* アクティブなページは最初から少し伸ばしておく */
+            background-color: #111111;
+        }
+
+        /* 背景のソフトな暗幕（メインコンテンツに集中させるための薄いレイヤー） */
+        .menu-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .menu-backdrop.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         /* 2. 3カラムグリッドコンテナ */
         .about-container { 
             display: grid; 
@@ -49,6 +207,7 @@
             opacity: 0;
             animation: fadeInPage 1.2s ease-out forwards;
             align-items: center; /* 縦方向の位置をテキストの高さに揃える（中央揃え） */
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
         
         /* 左カラム：セクションラベル */
@@ -59,7 +218,7 @@
             color: #888888; 
             text-transform: uppercase; 
             font-weight: 500;
-            align-self: start; /* ラベルだけは上部で固定します */
+            align-self: start; /* ラベルだけは上部で固定 */
         }
         
         /* 中央カラム：ブランド紹介・テキストコンテンツ */
@@ -84,21 +243,21 @@
             color: #333333;
         }
 
-        /* 右カラム：ブランドイメージ画像エリア */
+        /* 右カラム：ブランドイメージ画像エリア（カンプのS型幾何学シンボルと調和） */
         .about-image {
             grid-column: 8 / 13;
             overflow: hidden;
             display: flex;
-            align-items: center; /* 内部の画像位置をテキストと同じ中央揃えに */
+            align-items: center; 
             justify-content: center;
-            max-height: 280px; /* テキスト全体の高さに合わせるための最大の高さ制限 */
+            max-height: 280px; 
         }
 
         .about-image img {
             width: 100%;
             height: 100%;
-            max-height: 280px; /* 画像がはみ出さないように制限 */
-            object-fit: contain; /* 横縦比率を美しく保ったまま枠に合わせる */
+            max-height: 280px; 
+            object-fit: contain; 
             display: block;
             filter: grayscale(100%); 
             transition: filter 0.5s ease;
@@ -113,6 +272,7 @@
             margin-top: 100px;
             text-align: center;
             width: 100%;
+            z-index: 10;
         }
 
         .back-link {
@@ -160,14 +320,76 @@
 </head>
 <body>
 
+    <!-- 背景の薄暗いオーバーレイレイヤー -->
+    <div class="menu-backdrop" id="menu-backdrop"></div>
+
+    <!-- ヘッダー：左上に変形メニュー、右上に現在地表示 -->
     <header>
+        <!-- 三本バー ⇄ テトラポット変形メニューボタン -->
+        <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
+            <span class="bar bar-1"></span>
+            <span class="bar bar-2"></span>
+            <span class="bar bar-3"></span>
+        </button>
+
         <div class="current-page">ABOUT</div>
     </header>
 
+    <!-- スライドインするライトグレーサイドバー（MENU-02.pngを完全模写） -->
+    <aside class="sidebar-menu" id="sidebar-menu">
+        <nav class="sidebar-nav">
+            <!-- HOME -->
+            <a href="index.html" class="sidebar-item">
+                <svg class="sidebar-icon" viewBox="0 0 24 24">
+                    <path d="M12 3L4 9v11h16V9l-8-6zm6 15H6v-8l6-4.5 6 4.5v8zM12 8.5c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5 3.5-1.57 3.5-3.5-1.57-3.5-3.5-3.5z"/>
+                </svg>
+                HOME
+            </a>
+            <!-- ABOUT (Active) -->
+            <a href="about.html" class="sidebar-item active-link">
+                <svg class="sidebar-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+                ABOUT
+            </a>
+            <!-- SHOP -->
+            <a href="shop.html" class="sidebar-item">
+                <svg class="sidebar-icon" viewBox="0 0 24 24">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 11c-2.76 0-5-2.24-5-5h10c0 2.76-2.24 5-5 5z"/>
+                </svg>
+                SHOP
+            </a>
+            <!-- NEWS -->
+            <a href="news.html" class="sidebar-item">
+                <svg class="sidebar-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+                NEWS
+            </a>
+            <!-- WORKS -->
+            <a href="works.html" class="sidebar-item">
+                <svg class="sidebar-icon" viewBox="0 0 24 24">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                WORKS
+            </a>
+            <!-- CONTACT -->
+            <a href="contact.html" class="sidebar-item">
+                <svg class="sidebar-icon" viewBox="0 0 24 24">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+                CONTACT
+            </a>
+        </nav>
+    </aside>
+
+    <!-- メインコンテンツ：3カラム構造 -->
     <main>
-        <div class="about-container">
+        <div class="about-container" id="main-content">
+            <!-- 左カラム -->
             <div class="about-label">Concept</div>
             
+            <!-- 中央カラム -->
             <div class="about-content">
                 <h2 class="brand-name">scaL_TONE</h2>
                 <p class="about-text">
@@ -178,15 +400,70 @@
                 </p>
             </div>
 
+            <!-- 右カラム -->
             <div class="about-image">
-                <img src="/assets/logo2.png" alt="scaL_TONE Visual" onerror="this.style.display='none';">
+                <img src="/assets/logo2.png" alt="scaL_TONE Visual" onerror="this.src='https://placehold.co/280x280/eaeaea/111111?text=scaL_TONE';">
             </div>
         </div>
     </main>
 
+    <!-- フッター -->
     <footer>
         <a href="index.html" class="back-link">Back to home</a>
     </footer>
 
+    <!-- メニュー開閉用JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const trigger = document.getElementById('menu-trigger');
+            const menu = document.getElementById('sidebar-menu');
+            const backdrop = document.getElementById('menu-backdrop');
+            const mainContent = document.getElementById('main-content');
+
+            // メニュー展開時のトグル処理
+            function toggleMenu() {
+                const isOpen = menu.classList.toggle('open');
+                trigger.classList.toggle('active');
+                backdrop.classList.toggle('show');
+
+                // メニューが展開されたらメインエリアを少し右側にシフトさせて緊張感を演出（MENU-02.pngの構造の再現）
+                if (isOpen) {
+                    document.body.style.overflow = 'hidden'; // 背景スクロール禁止
+                    if (window.innerWidth > 768) {
+                        mainContent.style.transform = 'translateX(60px)';
+                    }
+                } else {
+                    document.body.style.overflow = '';
+                    mainContent.style.transform = 'translateX(0)';
+                }
+            }
+
+            // クリックイベントの登録
+            trigger.addEventListener('click', toggleMenu);
+            backdrop.addEventListener('click', toggleMenu);
+
+            // メニュー展開時のリンククリック時にフェードアウトをかける処理
+            const links = document.querySelectorAll('.sidebar-item');
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const targetUrl = this.getAttribute('href');
+                    if (targetUrl && targetUrl !== '#') {
+                        e.preventDefault();
+                        
+                        // サイドバーを引っ込めて暗幕を解除
+                        menu.classList.remove('open');
+                        trigger.classList.remove('active');
+                        backdrop.classList.remove('show');
+                        mainContent.style.transform = 'translateX(0)';
+                        
+                        // 優雅なフェードアウトの後に遷移
+                        setTimeout(() => {
+                            window.location.href = targetUrl;
+                        }, 500); 
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
