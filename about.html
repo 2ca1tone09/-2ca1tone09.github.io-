@@ -66,30 +66,38 @@
             width: 26px;
             height: auto;
             object-fit: contain;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
+            /* 物理的な弾力性を感じるイージング (cubic-bezier) により、滑らかなモーフィング（変形）を表現 */
+            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), 
                         opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 初期状態: menu1.png (三本バー) がアクティブ、menu2.png (テトラポット) は回転して隠れる */
+        /* 
+           初期状態: menu1.png (三本バー) がアクティブに直立。
+           menu2.png (テトラポット) は、中央の1点に極小に縮まり、回転した状態で裏で待機。
+        */
         .menu-trigger .icon-default {
             opacity: 1;
-            transform: rotate(0deg) scale(1);
+            transform: scale(1) rotate(0deg);
         }
 
         .menu-trigger .icon-active {
             opacity: 0;
-            transform: rotate(-180deg) scale(0.7);
+            transform: scale(0.1) rotate(-120deg);
         }
 
-        /* アクティブ（展開）状態: menu1.png がスピン消去、menu2.png がスピン登場 */
+        /* 
+           変形・モーフィング状態: 
+           menu1.png (三本バー) は中央に向かってギュッと極細に圧縮されつつ、回転しながら消滅。
+           menu2.png (テトラポット) は、その結合点から3方向の爪が飛び出すようにバネ的に拡大しながら回転して出現。
+        */
         .menu-trigger.active .icon-default {
             opacity: 0;
-            transform: rotate(180deg) scale(0.7);
+            transform: scaleX(0.1) scaleY(0.3) rotate(90deg);
         }
 
         .menu-trigger.active .icon-active {
             opacity: 1;
-            transform: rotate(0deg) scale(1);
+            transform: scale(1) rotate(0deg);
         }
 
         /* */
@@ -137,7 +145,6 @@
         .sidebar-item {
             display: flex;
             align-items: center;
-            gap: 12px;
             text-decoration: none;
             color: #111111;
             font-size: 11px;
@@ -148,10 +155,26 @@
             position: relative;
         }
 
+        /* 
+           【文字左側整列のための固定幅ラッパー】
+           HOME(22px)が収まる24pxの固定幅エリアを作り、すべての中央にアイコンを配置することで、
+           右側に続く「文字の左側」が完璧な縦一列にアライン（整列）します。
+        */
+        .sidebar-icon-wrapper {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 12px; /* アイコンとテキストの均一なギャップ */
+        }
+
         /* 指定された画像ファイルを呼び出すサイドバーアイコン用スタイル */
         .sidebar-icon {
-            width: 16px;
-            height: 16px;
+            max-width: 16px;
+            max-height: 16px;
+            width: 100%;
+            height: auto;
             object-fit: contain;
             opacity: 0.9;
             transition: transform 0.4s ease;
@@ -161,41 +184,35 @@
             transform: scale(1.1);
         }
 
-        /* */
-        /* 【特注】HOMEアイコンのみ、お預かりしているサイズ感を活かすために少し大きめに調整 */
+        /* 【特注】HOMEアイコンのみ、お預かりしているサイズ感を活かすためにwrapper内で最大22pxまで拡張 */
         .sidebar-item.home-link .sidebar-icon {
-            width: 22px;
-            height: 22px;
+            max-width: 22px;
+            max-height: 22px;
         }
 
         /* 
-           【文字下のアンダーバーが少し伸びるホバー効果】
-           カンプにあるアンダーバーの美学を踏襲し、
-           ホバーすると細い線が静かに右側に少し伸びる、繊細でプレミアムな仕掛け。
+           【統一された細線アンダーバーのホバー効果】
+           開始位置（left: 36px）は、wrapper(24px) + margin(12px) の位置に完全に固定。
+           全てのメニューでバーの細さ(1px)と長さ(20px ⇄ 44px)をミリ単位で完全統一しました。
         */
         .sidebar-item::after {
             content: '';
             position: absolute;
-            left: 28px; /* アイコンの幅(16px) + ギャップ(12px)に揃える */
+            left: 36px;
             bottom: 0;
             width: 20px; /* 通常時の長さ */
-            height: 1px;
+            height: 1px; /* 統一された極細ライン */
             background-color: #111111;
-            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), left 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        /* HOMEのみアイコンサイズ拡大に伴って線の開始位置を右へオフセット */
-        .sidebar-item.home-link::after {
-            left: 34px; /* アイコンの幅(22px) + ギャップ(12px)に揃える */
+            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .sidebar-item:hover::after {
-            width: 44px; /* ホバー時に少し伸びる */
+            width: 44px; /* ホバー時にスッと伸びる長さ */
         }
 
-        /* アクティブなページ（ABOUT）の識別マーク */
+        /* アクティブなページ（ABOUT）の識別マークも統一 */
         .sidebar-item.active-link::after {
-            width: 44px; /* アクティブなページは最初から少し伸ばしておく */
+            width: 44px; /* 最初から伸ばしておく */
             background-color: #111111;
         }
 
@@ -317,12 +334,6 @@
             opacity: 0.5;
         }
         
-        /* フェードインアニメーション */
-        @keyframes fadeInPage {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         /* モバイル対応（3カラムを縦並びに） */
         @media (max-width: 768px) { 
             .about-container { 
@@ -346,12 +357,12 @@
 </head>
 <body>
 
-    <!-- 背景の薄暗いオーバーレイレイヤー -->
+    <!-- 背景のソフトな暗幕 -->
     <div class="menu-backdrop" id="menu-backdrop"></div>
 
-    <!-- ヘッダー：右上に現在地表示（メニューボタンはfixed化したため、位置調整） -->
+    <!-- ヘッダー：右上に現在地表示（メニューボタンはfixed化して画面追従） -->
     <header>
-        <!-- menu1.png ⇄ menu2.png プレミアム変形メニューボタン（fixedで画面に完全追従） -->
+        <!-- menu1.png ⇄ menu2.png プレミアム変形・弾性モーフィングメニューボタン -->
         <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
             <img src="/assets/menu1.png" alt="Open Menu" class="menu-icon icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
             <img src="/assets/menu2.png" alt="Close Menu" class="menu-icon icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
@@ -360,54 +371,60 @@
         <div class="current-page">ABOUT</div>
     </header>
 
-    <!-- スライドインするライトグレーサイドバー（MENU-02.pngを完全模写） -->
+    <!-- -->
+    <!-- スライドインするライトグレーサイドバー（MENU-02.pngの完全再現） -->
     <aside class="sidebar-menu" id="sidebar-menu">
         <!-- サイドバー最上部にテトラポットシンボルを美しく配置 -->
         <div class="sidebar-logo">
             <img src="/assets/menu2.png" alt="scaL_TONE Symbol" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=Y';">
         </div>
         <nav class="sidebar-nav">
-            <!-- 
-                【書き換え可能な画像タグ仕様のサイドバーアイコン】
-                ご指定の画像ファイルのパスに変更してください。
-                assetsフォルダ等から各画像ファイルを読み込みます（デフォルトは、トップページの呼び出し構造に合わせて設定しています）。
-                もし画像がまだアップロードされていない場合でも、onerrorによってデザイン崩れを防ぐプレースホルダーが自動的に作動します。
-            -->
             
-            <!-- HOME (特注：home-linkクラスを追加してアイコンを大きめに調整) -->
+            <!-- HOME (特注：home-linkクラスを追加してアイコンを大きめに調整。Wrapperによりテキストの開始位置は完璧に揃います) -->
             <a href="index.html" class="sidebar-item home-link">
-                <img class="sidebar-icon" src="/assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/ffffff?text=H';" alt="">
+                <span class="sidebar-icon-wrapper">
+                    <img class="sidebar-icon" src="/assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/ffffff?text=H';" alt="">
+                </span>
                 HOME
             </a>
             <!-- ABOUT (Active) -->
             <a href="about.html" class="sidebar-item active-link">
-                <img class="sidebar-icon" src="/assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=A';" alt="">
+                <span class="sidebar-icon-wrapper">
+                    <img class="sidebar-icon" src="/assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=A';" alt="">
+                </span>
                 ABOUT
             </a>
             <!-- SHOP -->
             <a href="shop.html" class="sidebar-item">
-                <img class="sidebar-icon" src="/assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=S';" alt="">
+                <span class="sidebar-icon-wrapper">
+                    <img class="sidebar-icon" src="/assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=S';" alt="">
+                </span>
                 SHOP
             </a>
             <!-- NEWS -->
             <a href="news.html" class="sidebar-item">
-                <img class="sidebar-icon" src="/assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=N';" alt="">
+                <span class="sidebar-icon-wrapper">
+                    <img class="sidebar-icon" src="/assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=N';" alt="">
+                </span>
                 NEWS
             </a>
             <!-- WORKS -->
             <a href="works.html" class="sidebar-item">
-                <img class="sidebar-icon" src="/assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=W';" alt="">
+                <span class="sidebar-icon-wrapper">
+                    <img class="sidebar-icon" src="/assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=W';" alt="">
+                </span>
                 WORKS
             </a>
             <!-- CONTACT -->
             <a href="contact.html" class="sidebar-item">
-                <img class="sidebar-icon" src="/assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=C';" alt="">
+                <span class="sidebar-icon-wrapper">
+                    <img class="sidebar-icon" src="/assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=C';" alt="">
+                </span>
                 CONTACT
             </a>
         </nav>
     </aside>
 
-    <!-- -->
     <!-- メインコンテンツ：3カラム構造 -->
     <main>
         <div class="about-container" id="main-content">
