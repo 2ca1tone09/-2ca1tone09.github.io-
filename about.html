@@ -40,7 +40,8 @@
             text-transform: uppercase;
         }
 
-        /* ミニマルなハンバーガーメニュー・トリガー */
+        /* */
+        /* ミニマルなハンバーガーメニュー・トリガー（menu1.png ⇄ menu2.png プレミアム・クロスフェード） */
         .menu-trigger {
             background: none;
             border: none;
@@ -48,51 +49,44 @@
             width: 32px;
             height: 32px;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             position: relative;
             z-index: 1100; /* サイドバーよりも手前に表示 */
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 三本バーのベーススタイル（MENU_アートボード 1.png を参考に微細な厚みと丸みを設定） */
-        .menu-trigger .bar {
-            width: 26px;
-            height: 3.5px;
-            background-color: #111111;
+        .menu-trigger img {
             position: absolute;
-            border-radius: 1px;
+            width: 26px;
+            height: auto;
+            object-fit: contain;
             transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
-                        background-color 0.4s ease;
+                        opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 初期位置配置 */
-        .menu-trigger .bar-1 { transform: translateY(-7px); }
-        .menu-trigger .bar-2 { transform: translateY(0); }
-        .menu-trigger .bar-3 { transform: translateY(7px); }
-
-        /* 
-           【極上モーフィング】
-           クリック時に3本の直線が角度120度ずつに回転・配置され、
-           中央の一点から三方に突き出た「テトラポット（Y型）」へ変形する高度な幾何学トランスフォーム。
-        */
-        .menu-trigger.active .bar-1 {
-            /* 左上の枝に変形 */
-            transform: rotate(-120deg) translate(0px, 3.5px) scaleY(0.9);
-            background-color: #111111;
-        }
-        .menu-trigger.active .bar-2 {
-            /* 右上の枝に変形 */
-            transform: rotate(120deg) translate(0px, 3.5px) scaleY(0.9);
-            background-color: #111111;
-        }
-        .menu-trigger.active .bar-3 {
-            /* 真下の枝に変形 */
-            transform: rotate(90deg) translate(0px, -7px) scaleY(0.9);
-            background-color: #111111;
+        /* 初期状態: menu1.png (三本バー) がアクティブ、menu2.png (テトラポット) は回転して隠れる */
+        .menu-trigger .icon-default {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
         }
 
+        .menu-trigger .icon-active {
+            opacity: 0;
+            transform: rotate(-180deg) scale(0.7);
+        }
+
+        /* アクティブ（展開）状態: menu1.png がスピン消去、menu2.png がスピン登場 */
+        .menu-trigger.active .icon-default {
+            opacity: 0;
+            transform: rotate(180deg) scale(0.7);
+        }
+
+        .menu-trigger.active .icon-active {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        /* */
         /* 15〜20%の割合を占めるスライドイン・サイドバー（MENU-02.pngの完全再現） */
         .sidebar-menu {
             position: fixed;
@@ -112,6 +106,19 @@
 
         .sidebar-menu.open {
             left: 0; /* 滑らかに出現 */
+        }
+
+        /* サイドバー最上部のブランドマーク (menu2.pngをシンボル表示) */
+        .sidebar-logo {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .sidebar-logo img {
+            width: 32px;
+            height: auto;
+            object-fit: contain;
         }
 
         /* サイドバー内のリンク構造 */
@@ -194,6 +201,7 @@
             pointer-events: auto;
         }
 
+        /* */
         /* 2. 3カラムグリッドコンテナ */
         .about-container { 
             display: grid; 
@@ -320,16 +328,16 @@
 </head>
 <body>
 
+    <!-- -->
     <!-- 背景の薄暗いオーバーレイレイヤー -->
     <div class="menu-backdrop" id="menu-backdrop"></div>
 
-    <!-- ヘッダー：左上に変形メニュー、右上に現在地表示 -->
+    <!-- ヘッダー：左上に画像変形メニュー、右上に現在地表示 -->
     <header>
-        <!-- 三本バー ⇄ テトラポット変形メニューボタン -->
+        <!-- menu1.png ⇄ menu2.png プレミアム変形メニューボタン -->
         <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
-            <span class="bar bar-1"></span>
-            <span class="bar bar-2"></span>
-            <span class="bar bar-3"></span>
+            <img src="menu1.png" alt="Open Menu" class="menu-icon icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
+            <img src="menu2.png" alt="Close Menu" class="menu-icon icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
         </button>
 
         <div class="current-page">ABOUT</div>
@@ -337,6 +345,10 @@
 
     <!-- スライドインするライトグレーサイドバー（MENU-02.pngを完全模写） -->
     <aside class="sidebar-menu" id="sidebar-menu">
+        <!-- サイドバー最上部にテトラポットシンボルを美しく配置 -->
+        <div class="sidebar-logo">
+            <img src="menu2.png" alt="scaL_TONE Symbol" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=Y';">
+        </div>
         <nav class="sidebar-nav">
             <!-- HOME -->
             <a href="index.html" class="sidebar-item">
@@ -412,6 +424,7 @@
         <a href="index.html" class="back-link">Back to home</a>
     </footer>
 
+    <!-- -->
     <!-- メニュー開閉用JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
