@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WORKS | scaL_TONE</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         
         body { 
             background-color: #ffffff; 
@@ -60,7 +64,6 @@
             z-index: 1100; /* サイドバーよりも手前に表示 */
         }
 
-        /* <!-- STREAMING_CHUNK:Styling the premium sliding menu triggers... --> */
         .menu-trigger img {
             position: absolute;
             width: 26px;
@@ -135,7 +138,6 @@
             gap: 22px;
         }
 
-        /* <!-- STREAMING_CHUNK:Designing the perfectly aligned navigation links... --> */
         .sidebar-item {
             display: flex;
             align-items: center;
@@ -229,7 +231,6 @@
             pointer-events: auto;
         }
         
-        /* <!-- STREAMING_CHUNK:Styling the asymmetric gallery grid and work items... --> */
         /* 2. 12カラムギャラリーのグリッドコンテナ */
         .works-grid { 
             display: grid; 
@@ -365,7 +366,6 @@
         }
     </style>
 </head>
-<!-- <!-- STREAMING_CHUNK:Structuring the document body and mobile overlay... --> -->
 <body>
 
     <!-- 背景の薄暗いオーバーレイレイヤー -->
@@ -382,7 +382,6 @@
         <div class="current-page">WORKS</div>
     </header>
 
-    <!-- <!-- STREAMING_CHUNK:Implementing the slide-out navigation sidebar... --> -->
     <!-- スライドインするライトグレーサイドバー（MENU-02.pngを完全模写） -->
     <aside class="sidebar-menu" id="sidebar-menu">
         <!-- サイドバー最上部にテトラポットシンボルを美しく配置 -->
@@ -442,7 +441,6 @@
         </nav>
     </aside>
 
-    <!-- <!-- STREAMING_CHUNK:Structuring main gallery items... --> -->
     <!-- メイン：作品グリッドエリア -->
     <main class="works-grid" id="works-grid">
 
@@ -498,7 +496,6 @@
         <a href="index.html" class="back-link">Back to home</a>
     </footer>
 
-    <!-- <!-- STREAMING_CHUNK:Developing the random grid positioning and fade-in scripts... --> -->
     <!-- ランダム自動レイアウト ＆ シーケンシャルフェードインエンジン ＆ メニュー開閉処理 -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
