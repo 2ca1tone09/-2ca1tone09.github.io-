@@ -40,11 +40,10 @@
             text-transform: uppercase;
         }
 
-        /* */
         /* 
-           【極上レスポンシブ固定（追従）メニューボタン】
-           スクロールしても左上に追従。
-           画面最大幅1200pxの左端にピタリとシンクロし、スマホ等では端から20pxの美しい位置をキープ。
+            【極上レスポンシブ固定（追従）メニューボタン】
+            スクロールしても左上に追従。
+            画面最大幅1200pxの左端にピタリとシンクロし、スマホ等では端から20pxの美しい位置をキープ。
         */
         .menu-trigger {
             position: fixed;
@@ -66,41 +65,32 @@
             width: 26px;
             height: auto;
             object-fit: contain;
-            /* 物理的な弾力性を感じるイージング (cubic-bezier) により、滑らかなモーフィング（変形）を表現 */
-            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), 
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
                         opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 
-           初期状態: menu1.png (三本バー) がアクティブに直立。
-           menu2.png (テトラポット) は、中央の1点に極小に縮まり、回転した状態で裏で待機。
-        */
+        /* 初期状態: menu1.png (三本バー) がアクティブ、menu2.png (テトラポット) は回転して隠れる */
         .menu-trigger .icon-default {
             opacity: 1;
-            transform: scale(1) rotate(0deg);
+            transform: rotate(0deg) scale(1);
         }
 
         .menu-trigger .icon-active {
             opacity: 0;
-            transform: scale(0.1) rotate(-120deg);
+            transform: rotate(-180deg) scale(0.7);
         }
 
-        /* 
-           変形・モーフィング状態: 
-           menu1.png (三本バー) は中央に向かってギュッと極細に圧縮されつつ、回転しながら消滅。
-           menu2.png (テトラポット) は、その結合点から3方向の爪が飛び出すようにバネ的に拡大しながら回転して出現。
-        */
+        /* アクティブ（展開）状態: menu1.png がスピン消去、menu2.png がスピン登場 */
         .menu-trigger.active .icon-default {
             opacity: 0;
-            transform: scaleX(0.1) scaleY(0.3) rotate(90deg);
+            transform: rotate(180deg) scale(0.7);
         }
 
         .menu-trigger.active .icon-active {
             opacity: 1;
-            transform: scale(1) rotate(0deg);
+            transform: rotate(0deg) scale(1);
         }
 
-        /* */
         /* 15〜20%の割合を占めるスライドイン・サイドバー（MENU-02.pngの完全再現） */
         .sidebar-menu {
             position: fixed;
@@ -145,6 +135,7 @@
         .sidebar-item {
             display: flex;
             align-items: center;
+            gap: 12px;
             text-decoration: none;
             color: #111111;
             font-size: 11px;
@@ -155,18 +146,14 @@
             position: relative;
         }
 
-        /* 
-           【文字左側整列のための固定幅ラッパー】
-           HOME(22px)が収まる24pxの固定幅エリアを作り、すべての中央にアイコンを配置することで、
-           右側に続く「文字の左側」が完璧な縦一列にアライン（整列）します。
-        */
+        /* アイコンを包むラッパーコンテナを24pxで完全固定。これで文字の開始位置を完璧に揃える */
         .sidebar-icon-wrapper {
             width: 24px;
             height: 24px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            margin-right: 12px; /* アイコンとテキストの均一なギャップ */
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         /* 指定された画像ファイルを呼び出すサイドバーアイコン用スタイル */
@@ -191,29 +178,31 @@
         }
 
         /* 
-           【統一された細線アンダーバーのホバー効果】
-           開始位置（left: 36px）は、wrapper(24px) + margin(12px) の位置に完全に固定。
-           全てのメニューでバーの細さ(1px)と長さ(20px ⇄ 44px)をミリ単位で完全統一しました。
+           【完全に統一された長さと太さのアンダーバー】
+           すべてのメニュー、すべての状態（通常時・ホバー時・アクティブ時）において、
+           線の長さ（30px）と太さ（1px）をミリ単位で完全に均一に統一しました。
+           これにより、ミニマルなグリッドの規律がより一層際立ちます。
         */
         .sidebar-item::after {
             content: '';
             position: absolute;
-            left: 36px;
+            left: 36px; /* wrapper(24px) + margin(12px) の位置に完璧に固定 */
             bottom: 0;
-            width: 20px; /* 通常時の長さ */
-            height: 1px; /* 統一された極細ライン */
+            width: 30px; /* 完全に統一された固定長 */
+            height: 1px; /* 完全に統一された極細ライン */
             background-color: #111111;
-            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 0; /* 通常時は静寂を保つために非表示 */
+            transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
+        /* ホバー時に同じ長さ・太さのまま美しくフェードイン */
         .sidebar-item:hover::after {
-            width: 44px; /* ホバー時にスッと伸びる長さ */
+            opacity: 1;
         }
 
-        /* アクティブなページ（ABOUT）の識別マークも統一 */
+        /* アクティブなページ（ABOUT）も同じ長さ・太さのまま常時表示 */
         .sidebar-item.active-link::after {
-            width: 44px; /* 最初から伸ばしておく */
-            background-color: #111111;
+            opacity: 1;
         }
 
         /* 背景のソフトな暗幕（メインコンテンツに集中させるための薄いレイヤー） */
@@ -236,7 +225,6 @@
             pointer-events: auto;
         }
 
-        /* */
         /* 2. 3カラムグリッドコンテナ */
         .about-container { 
             display: grid; 
@@ -334,10 +322,7 @@
             opacity: 0.5;
         }
         
-        /* 
-           【超重要：復元したフェードインアニメーション】
-           これが無かったため、opacity: 0 のまま画面が表示されなくなっていました。確実に復元完了。
-        */
+        /* フェードインアニメーション */
         @keyframes fadeInPage {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -366,12 +351,12 @@
 </head>
 <body>
 
-    <!-- 背景のソフトな暗幕 -->
+    <!-- 背景の薄暗いオーバーレイレイヤー -->
     <div class="menu-backdrop" id="menu-backdrop"></div>
 
-    <!-- ヘッダー：右上に現在地表示（メニューボタンはfixed化して画面追従） -->
+    <!-- ヘッダー：右上に現在地表示（メニューボタンはfixed化したため、位置調整） -->
     <header>
-        <!-- menu1.png ⇄ menu2.png プレミアム変形・弾性モーフィングメニューボタン -->
+        <!-- menu1.png ⇄ menu2.png プレミアム変形メニューボタン（fixedで画面に完全追従） -->
         <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
             <img src="/assets/menu1.png" alt="Open Menu" class="menu-icon icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
             <img src="/assets/menu2.png" alt="Close Menu" class="menu-icon icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
@@ -380,55 +365,60 @@
         <div class="current-page">ABOUT</div>
     </header>
 
-    <!-- -->
-    <!-- スライドインするライトグレーサイドバー（MENU-02.pngの完全再現） -->
+    <!-- スライドインするライトグレーサイドバー（MENU-02.pngを完全模写） -->
     <aside class="sidebar-menu" id="sidebar-menu">
         <!-- サイドバー最上部にテトラポットシンボルを美しく配置 -->
         <div class="sidebar-logo">
             <img src="/assets/menu2.png" alt="scaL_TONE Symbol" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=Y';">
         </div>
         <nav class="sidebar-nav">
+            <!-- 
+                【書き換え可能な画像タグ仕様のサイドバーアイコン】
+                ご指定の画像ファイルのパスに変更してください。
+                assetsフォルダ等から各画像ファイルを読み込みます。
+                もし画像がまだアップロードされていない場合でも、onerrorによってデザイン崩れを防ぐプレースホルダーが自動的に作動します。
+            -->
             
-            <!-- HOME (特注：home-linkクラスを追加してアイコンを大きめに調整。Wrapperによりテキストの開始位置は完璧に揃います) -->
+            <!-- HOME (特注：home-linkクラスを追加してアイコンを大きめに調整) -->
             <a href="index.html" class="sidebar-item home-link">
-                <span class="sidebar-icon-wrapper">
+                <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="/assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/ffffff?text=H';" alt="">
-                </span>
+                </div>
                 HOME
             </a>
             <!-- ABOUT (Active) -->
             <a href="about.html" class="sidebar-item active-link">
-                <span class="sidebar-icon-wrapper">
+                <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="/assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=A';" alt="">
-                </span>
+                </div>
                 ABOUT
             </a>
             <!-- SHOP -->
             <a href="shop.html" class="sidebar-item">
-                <span class="sidebar-icon-wrapper">
+                <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="/assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=S';" alt="">
-                </span>
+                </div>
                 SHOP
             </a>
             <!-- NEWS -->
             <a href="news.html" class="sidebar-item">
-                <span class="sidebar-icon-wrapper">
+                <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="/assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=N';" alt="">
-                </span>
+                </div>
                 NEWS
             </a>
             <!-- WORKS -->
             <a href="works.html" class="sidebar-item">
-                <span class="sidebar-icon-wrapper">
+                <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="/assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=W';" alt="">
-                </span>
+                </div>
                 WORKS
             </a>
             <!-- CONTACT -->
             <a href="contact.html" class="sidebar-item">
-                <span class="sidebar-icon-wrapper">
+                <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="/assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=C';" alt="">
-                </span>
+                </div>
                 CONTACT
             </a>
         </nav>
@@ -463,7 +453,6 @@
         <a href="index.html" class="back-link">Back to home</a>
     </footer>
 
-    <!-- -->
     <!-- メニュー開閉用JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
