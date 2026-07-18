@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTFOLIO | scaL_TONE</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            background-color: #ffffff; 
+            color: #111111; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            padding: 40px 20px 100px; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+            position: relative;
+            /* ページ遷移時のフェードアウト用 */
+            opacity: 1;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        body.page-fade-out {
+            opacity: 0 !important;
+            transform: translateY(-8px);
+        }
+        
+        /* ヘッダー：現在地表示（右寄せ） */
+        header { 
+            max-width: 1200px; 
+            margin: 0 auto 80px; 
+            display: flex; 
+            justify-content: flex-end; 
+            align-items: center;
+            width: 100%;
+            z-index: 100;
+        }
+        
+        .current-page { 
+            font-size: 10px; 
+            letter-spacing: 0.2em; 
+            font-weight: 700; 
+            border-bottom: 1px solid #111111; 
+            padding-bottom: 4px; 
+            text-transform: uppercase;
+        }
+
+        /* 左上固定メニューボタン */
+        .menu-trigger {
+            position: fixed;
+            top: 40px;
+            left: max(20px, calc(50% - 600px));
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+        }
+
+        .menu-trigger img {
+            position: absolute;
+            width: 26px;
+            height: auto;
+            object-fit: contain;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
+                        opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .menu-trigger .icon-default { opacity: 1; transform: rotate(0deg) scale(1); }
+        .menu-trigger .icon-active { opacity: 0; transform: rotate(-180deg) scale(0.7); }
+        .menu-trigger.active .icon-default { opacity: 0; transform: rotate(180deg) scale(0.7); }
+        .menu-trigger.active .icon-active { opacity: 1; transform: rotate(0deg) scale(1); }
+
+        /* スライドイン・サイドバー */
+        .sidebar-menu {
+            position: fixed;
+            top: 0;
+            left: -260px;
+            width: 240px;
+            height: 100vh;
+            background-color: #eaeaea;
+            z-index: 1000;
+            padding: 120px 30px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
+        }
+
+        .sidebar-menu.open { left: 0; }
+
+        .sidebar-logo { margin-bottom: 12px; display: flex; justify-content: flex-start; }
+        .sidebar-logo img { width: 32px; height: auto; object-fit: contain; }
+
+        .sidebar-nav { display: flex; flex-direction: column; gap: 22px; }
+        .sidebar-item {
+            display: flex; align-items: center; gap: 12px;
+            text-decoration: none; color: #111111;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.15em;
+            text-transform: uppercase; padding: 6px 0; position: relative;
+        }
+
+        .sidebar-icon-wrapper { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .sidebar-icon { max-width: 16px; max-height: 16px; width: 100%; height: auto; object-fit: contain; opacity: 0.9; transition: transform 0.4s ease; }
+        .sidebar-item:hover .sidebar-icon { transform: scale(1.1); }
+        .sidebar-item.home-link .sidebar-icon { max-width: 22px; max-height: 22px; }
+
+        .sidebar-item::after {
+            content: ''; position: absolute; left: 36px; bottom: 0;
+            width: 30px; height: 1px; background-color: #111111;
+            opacity: 0; transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .sidebar-item:hover::after, .sidebar-item.active-link::after { opacity: 1; }
+
+        /* 暗幕 */
+        .menu-backdrop {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(255, 255, 255, 0.4); backdrop-filter: blur(2px);
+            z-index: 999; opacity: 0; pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .menu-backdrop.show { opacity: 1; pointer-events: auto; }
+
+        /* 3カラム構成のギャラリーコンテナ */
+        .portfolio-container { 
+            display: grid; 
+            grid-template-columns: repeat(12, 1fr); 
+            gap: 20px; 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            padding: 45px 0; 
+            border-top: 1px solid #111111; 
+            width: 100%;
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeInContent 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        /* 左カラム：セクションラベル */
+        .portfolio-label { 
+            grid-column: 1 / 3; 
+            font-size: 10px; 
+            letter-spacing: 0.15em; 
+            color: #888888; 
+            text-transform: uppercase; 
+            font-weight: 500;
+        }
+        
+        /* 中央カラム：画像を大きく縦に並べるエリア */
+        /* 12カラム中、3〜11カラムを使用して贅沢な幅を持たせる */
+        .portfolio-images { 
+            grid-column: 3 / 11; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 60px; /* 画像と画像の間の余白を広めに取って美しく見せる */
+        }
+        
+        .portfolio-images img {
+            width: 100%;
+            height: auto;
+            display: block;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 紙のようなわずかな浮遊感 */
+        }
+        
+        /* フッター（戻るボタン） */
+        footer {
+            margin-top: 120px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .back-link {
+            display: inline-block;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            color: #111111;
+            text-decoration: none;
+            border-bottom: 1px solid #111111;
+            padding-bottom: 4px;
+            transition: opacity 0.3s ease;
+            text-transform: uppercase;
+            position: relative;
+        }
+        
+        .back-link::before {
+            content: ''; position: absolute; top: -15px; bottom: -15px; left: -25px; right: -25px;
+        }
+        .back-link:hover { opacity: 0.5; }
+        
+        /* アニメーション */
+        @keyframes fadeInContent {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* モバイル対応（1カラムに再構築） */
+        @media (max-width: 768px) { 
+            .portfolio-container { 
+                display: flex; 
+                flex-direction: column; 
+                gap: 40px;
+            } 
+            .portfolio-label {
+                margin-bottom: -10px;
+            }
+            .portfolio-images {
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景の薄暗いオーバーレイレイヤー -->
+    <div class="menu-backdrop" id="menu-backdrop"></div>
+
+    <!-- ヘッダー -->
+    <header>
+        <!-- メニューボタン -->
+        <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
+            <img src="/assets/menu1.png" alt="Open Menu" class="menu-icon icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
+            <img src="/assets/menu2.png" alt="Close Menu" class="menu-icon icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
+        </button>
+
+        <div class="current-page">PORTFOLIO</div>
+    </header>
+
+    <!-- サイドバー -->
+    <aside class="sidebar-menu" id="sidebar-menu">
+        <div class="sidebar-logo">
+            <img src="/assets/menu2.png" alt="scaL_TONE Symbol" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=Y';">
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-item home-link">
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="/assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/ffffff?text=H';" alt=""></div>
+                HOME
+            </a>
+            <a href="about.html" class="sidebar-item">
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="/assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=A';" alt=""></div>
+                ABOUT
+            </a>
+            <a href="shop.html" class="sidebar-item">
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="/assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=S';" alt=""></div>
+                SHOP
+            </a>
+            <a href="news.html" class="sidebar-item">
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="/assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=N';" alt=""></div>
+                NEWS
+            </a>
+            <!-- ポートフォリオはWorksの一部として扱うため、WORKSをアクティブに設定 -->
+            <a href="works.html" class="sidebar-item active-link">
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="/assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=W';" alt=""></div>
+                WORKS
+            </a>
+            <a href="contact.html" class="sidebar-item">
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="/assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=C';" alt=""></div>
+                CONTACT
+            </a>
+        </nav>
+    </aside>
+
+    <!-- メインコンテンツ：3カラム構造 -->
+    <main>
+        <div class="portfolio-container" id="main-content">
+            <!-- 左カラム -->
+            <div class="portfolio-label">Architectural Portfolio</div>
+            
+            <!-- 中央カラム（画像を縦に羅列） -->
+            <!-- プレースホルダーはポートフォリオでよくあるA4縦/横の比率に近いサイズを設定しています -->
+            <div class="portfolio-images">
+                <img src="/assets/portfolio/pot01.png" alt="Portfolio Page 01" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot01.png';">
+                <img src="/assets/portfolio/pot02.png" alt="Portfolio Page 02" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot02.png';">
+                <img src="/assets/portfolio/pot03.png" alt="Portfolio Page 03" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot03.png';">
+                <img src="/assets/portfolio/pot04.png" alt="Portfolio Page 04" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot04.png';">
+                <img src="/assets/portfolio/pot05.png" alt="Portfolio Page 05" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot05.png';">
+                <img src="/assets/portfolio/pot06.png" alt="Portfolio Page 06" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot06.png';">
+                <img src="/assets/portfolio/pot07.png" alt="Portfolio Page 07" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot07.png';">
+                <img src="/assets/portfolio/pot08.png" alt="Portfolio Page 08" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot08.png';">
+                <img src="/assets/portfolio/pot09.png" alt="Portfolio Page 09" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot09.png';">
+                <img src="/assets/portfolio/pot10.png" alt="Portfolio Page 10" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot10.png';">
+                <img src="/assets/portfolio/pot11.png" alt="Portfolio Page 11" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot11.png';">
+                <img src="/assets/portfolio/pot12.png" alt="Portfolio Page 12" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot12.png';">
+                <img src="/assets/portfolio/pot13.png" alt="Portfolio Page 13" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot13.png';">
+                <img src="/assets/portfolio/pot14.png" alt="Portfolio Page 14" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot14.png';">
+                <img src="/assets/portfolio/pot15.png" alt="Portfolio Page 15" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot15.png';">
+                <img src="/assets/portfolio/pot16.png" alt="Portfolio Page 16" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot16.png';">
+            </div>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer>
+        <a href="works.html" class="back-link">Back to works</a>
+    </footer>
+
+    <!-- メニュー開閉・ページ遷移インタラクションJavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const trigger = document.getElementById('menu-trigger');
+            const menu = document.getElementById('sidebar-menu');
+            const backdrop = document.getElementById('menu-backdrop');
+            const mainContent = document.getElementById('main-content');
+            const backLink = document.querySelector('.back-link');
+
+            // 1. メニュー開閉時のトグル処理
+            function toggleMenu() {
+                const isOpen = menu.classList.toggle('open');
+                trigger.classList.toggle('active');
+                backdrop.classList.toggle('show');
+
+                // メニュー展開時、メインエリアを少し右側にシフトさせて緊張感を演出
+                if (isOpen) {
+                    document.body.style.overflow = 'hidden';
+                    if (window.innerWidth > 768) {
+                        mainContent.style.transform = 'translateX(60px)';
+                    }
+                } else {
+                    document.body.style.overflow = '';
+                    mainContent.style.transform = 'translateX(0)';
+                }
+            }
+
+            trigger.addEventListener('click', toggleMenu);
+            backdrop.addEventListener('click', toggleMenu);
+
+            // 2. サイドバー内のリンククリック時：優雅なフェードアウト遷移
+            const links = document.querySelectorAll('.sidebar-item');
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const targetUrl = this.getAttribute('href');
+                    if (targetUrl && targetUrl !== '#') {
+                        e.preventDefault();
+                        
+                        menu.classList.remove('open');
+                        trigger.classList.remove('active');
+                        backdrop.classList.remove('show');
+                        mainContent.style.transform = 'translateX(0)';
+                        
+                        setTimeout(() => {
+                            window.location.href = targetUrl;
+                        }, 500); 
+                    }
+                });
+            });
+
+            // 3. フッターのBackリンククリック時：ページ全体をフェードアウト
+            if (backLink) {
+                backLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetUrl = this.getAttribute('href');
+                    document.body.classList.add('page-fade-out');
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 500);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
