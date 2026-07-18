@@ -10,6 +10,7 @@
             margin: 0;
             padding: 0;
         }
+        
         body {
             background-color: #ffffff;
             color: #111111;
@@ -22,18 +23,29 @@
             overflow: hidden;
             padding: 20px;
         }
+        
         .container {
-            text-align: center;
-            width: 100%;
-            max-width: 600px;
             position: relative;
+            width: 600px;
+            height: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 画面幅が小さい場合は全体をそのまま縮小してレイアウト崩れを防ぐ */
+            transition: transform 0.3s ease;
+        }
+
+        @media (max-width: 650px) {
+            .container { transform: scale(0.65); }
+        }
+        @media (max-width: 400px) {
+            .container { transform: scale(0.55); }
         }
 
         /* 1. 中央のロゴ（初期フェードイン ➡ ゆったりとした拍動へ） */
         .logo-wrapper {
-            display: inline-block;
-            margin-bottom: 50px;
-            /* 改善ポイント：初期状態を最初から完全に透明にしておくことで、読み込み時のチラつきを完全に防ぎます */
+            position: relative;
+            z-index: 10;
             opacity: 0;
             /* 起動時：4秒かけてフェードイン ➡ その後3秒の遅延（起動中盤）から3.5秒周期の深い鼓動を開始 */
             animation: fadeInLogo 4.0s cubic-bezier(0.4, 0, 0.2, 1) forwards, 
@@ -49,19 +61,48 @@
             display: block;
         }
 
-        /* 2. ナビゲーションメニュー */
+        /* 2. 背景の回転する一点鎖線の円 */
+        .circle-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 480px; /* 直径480 = 半径240pxの軌道 */
+            height: 480px;
+            transform: translate(-50%, -50%) rotate(0deg);
+            opacity: 0;
+            pointer-events: none;
+            /* メニュー展開の後にふわっとエレガントに出現させる */
+            transition: opacity 1.2s ease 0.6s;
+            z-index: 1;
+        }
+
+        .activated .circle-ring {
+            opacity: 1;
+            /* 待機中はゆっくりと回転し続ける */
+            animation: rotateRing 60s linear infinite;
+        }
+
+        @keyframes rotateRing {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* 3. ナビゲーションメニュー */
         .nav-menu {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            gap: 32px;
-            list-style: none;
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            position: relative;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
         }
 
         /* 各ナビゲーション項目（初期状態：ロゴの中心に重なって完全に隠れている） */
         .nav-item {
+            position: absolute;
+            top: 50%;
+            left: 50%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -71,48 +112,13 @@
             opacity: 0;
             pointer-events: none;
             
-            /* 初期位置：ロゴの中心（上方向へ120pxオフセットして重なる） */
-            transform: translateY(-120px) scale(0) rotate(15deg);
+            /* 初期位置：ロゴの中心（中心から少し傾けておく） */
+            transform: translate(-50%, -50%) scale(0) rotate(15deg);
             /* 飛び出す際のスプリング感（イージング）を設定 */
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
                         opacity 0.6s ease;
+            transition-delay: var(--delay);
         }
-
-        /* 放射状に飛び出すための各項目の初期角度と位置の微調整 */
-        .nav-item:nth-child(1) { --dx: 150px;  --rotate: -20deg; transition-delay: 0.0s; } /* ABOUT */
-        .nav-item:nth-child(2) { --dx: 75px;   --rotate: -10deg; transition-delay: 0.05s; } /* SHOP */
-        .nav-item:nth-child(3) { --dx: 0px;    --rotate: 0deg;   transition-delay: 0.1s; }  /* NEWS */
-        .nav-item:nth-child(4) { --dx: -75px;  --rotate: 10deg;  transition-delay: 0.15s; } /* WORKS */
-        .nav-item:nth-child(5) { --dx: -150px; --rotate: 20deg;  transition-delay: 0.2s; }  /* CONTACT */
-
-        /* 初期非アクティブ時の位置を個別定義（ロゴの中心に収束） */
-        .nav-item {
-            transform: translate(var(--dx), -120px) scale(0) rotate(var(--rotate));
-        }
-
-        /* ホバー時の緩やかな浮き上がり */
-        .nav-item:hover {
-            transform: translate(0, -4px) scale(1.05) !important;
-        }
-
-        /* アイコン画像の設定 */
-        .nav-icon {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-            margin-bottom: 12px;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
-        }
-
-        /* テキストの設定 */
-        .nav-label {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-        }
-
-        /* --- 状態変更用クラス (JavaScriptで制御) --- */
 
         /* ロゴタップ後：鼓動を止め、ナビゲーションを放射状に展開 */
         .activated .logo-wrapper {
@@ -123,8 +129,29 @@
         .activated .nav-item {
             opacity: 1;
             pointer-events: auto;
-            /* 定位置（オフセットなし）へバネのように弾けて着地 */
-            transform: translate(0, 0) scale(1) rotate(0deg);
+            /* 定位置（HTML側の --tx, --ty オフセット）へバネのように弾けて着地 */
+            transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1) rotate(0deg);
+        }
+
+        /* ホバー時の緩やかな浮き上がり */
+        .nav-item:hover {
+            transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty) - 4px)) scale(1.05) !important;
+        }
+
+        /* アイコン画像とテキストの設定 */
+        .nav-icon {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            margin-bottom: 12px;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
         }
 
         /* ページ遷移時：クリックされたメニューアイコンが一回転しながらフェードアウト */
@@ -133,29 +160,31 @@
             opacity: 0;
         }
 
-        /* ページ遷移時：クリックされなかった他のメニューは静かにフェードアウト */
+        /* ページ遷移時：クリックされなかった他のメニューは下に落ちながら静かにフェードアウト */
         .nav-item.fade-out {
             opacity: 0 !important;
-            transform: translateY(10px) scale(0.9);
+            transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty) + 15px)) scale(0.9) !important;
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-        /* ページ遷移時：ロゴも一緒にフェードアウト */
+        /* ページ遷移時：ロゴと円も一緒に静かに消去 */
         .logo-wrapper.fade-out {
             opacity: 0;
             transform: translateY(-10px);
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-        /* --- アニメーション定義 --- */
+        .circle-ring.fade-out {
+            opacity: 0 !important;
+            transition: opacity 0.5s ease;
+        }
 
-        /* 起動時のロゴフェードイン */
+        /* 起動時のロゴフェードインと拍動アニメーション */
         @keyframes fadeInLogo {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 3.5秒周期の深くゆったりとした鼓動（心拍） */
         @keyframes heartbeat {
             0% { transform: scale(1); opacity: 0.8; }
             12% { transform: scale(1.05); opacity: 1; }
@@ -168,29 +197,47 @@
 </head>
 <body>
     <div class="container" id="main-container">
-        <div class="logo-wrapper" id="logo-wrap">
-            <img src="/assets/logo2.png" alt="scaL_TONE" class="logo" id="logo">
+        
+        <!-- 回転する図面風の一点鎖線の円 -->
+        <div class="circle-ring" id="circle-ring">
+            <svg viewBox="0 0 500 500" width="100%" height="100%" style="overflow: visible;">
+                <!-- 長さ24、空白8、長さ4、空白8 のパターンで図面の一点鎖線を表現 -->
+                <circle cx="250" cy="250" r="240" fill="none" stroke="#111111" stroke-width="1" stroke-dasharray="24 8 4 8" />
+            </svg>
         </div>
 
+        <!-- ロゴ -->
+        <div class="logo-wrapper" id="logo-wrap">
+            <img src="/assets/logo2.png" alt="scaL_TONE" class="logo" id="logo" onerror="this.src='https://placehold.co/180x180/ffffff/111111?text=scaL_TONE';">
+        </div>
+
+        <!-- 
+            半径240pxの円周上に沿った座標計算 (cos, sin) で配置
+            ABOUT: 180度 (左端)
+            SHOP: 135度 (左下)
+            NEWS: 90度 (真下)
+            WORKS: 45度 (右下)
+            CONTACT: 0度 (右端)
+        -->
         <nav class="nav-menu">
-            <a href="about.html" class="nav-item">
-                <img src="/assets/about.png" alt="" class="nav-icon">
+            <a href="about.html" class="nav-item" style="--tx: -240px; --ty: 0px; --delay: 0.0s;">
+                <img src="/assets/about.png" alt="" class="nav-icon" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=A';">
                 <span class="nav-label">ABOUT</span>
             </a>
-            <a href="shop.html" class="nav-item">
-                <img src="/assets/shop.png" alt="" class="nav-icon">
+            <a href="shop.html" class="nav-item" style="--tx: -170px; --ty: 170px; --delay: 0.05s;">
+                <img src="/assets/shop.png" alt="" class="nav-icon" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=S';">
                 <span class="nav-label">SHOP</span>
             </a>
-            <a href="news.html" class="nav-item">
-                <img src="/assets/news.png" alt="" class="nav-icon">
+            <a href="news.html" class="nav-item" style="--tx: 0px; --ty: 240px; --delay: 0.1s;">
+                <img src="/assets/news.png" alt="" class="nav-icon" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=N';">
                 <span class="nav-label">NEWS</span>
             </a>
-            <a href="works.html" class="nav-item">
-                <img src="/assets/work.png" alt="" class="nav-icon">
+            <a href="works.html" class="nav-item" style="--tx: 170px; --ty: 170px; --delay: 0.15s;">
+                <img src="/assets/work.png" alt="" class="nav-icon" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=W';">
                 <span class="nav-label">WORKS</span>
             </a>
-            <a href="contact.html" class="nav-item">
-                <img src="/assets/contact.png" alt="" class="nav-icon">
+            <a href="contact.html" class="nav-item" style="--tx: 240px; --ty: 0px; --delay: 0.2s;">
+                <img src="/assets/contact.png" alt="" class="nav-icon" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=C';">
                 <span class="nav-label">CONTACT</span>
             </a>
         </nav>
@@ -200,6 +247,7 @@
         const container = document.getElementById('main-container');
         const logo = document.getElementById('logo');
         const logoWrap = document.getElementById('logo-wrap');
+        const circleRing = document.getElementById('circle-ring');
 
         // 1. ロゴクリック時に放射状にメニューをポップアップさせる
         logo.addEventListener('click', function() {
@@ -216,13 +264,14 @@
                 const targetUrl = this.getAttribute('href');
                 const allItems = document.querySelectorAll('.nav-item');
 
-                // 他のメニューとロゴを即座にフェードアウト
+                // 他のメニュー、ロゴ、そして背景の円も即座にフェードアウト
                 allItems.forEach(el => {
                     if (el !== this) {
                         el.classList.add('fade-out');
                     }
                 });
                 logoWrap.classList.add('fade-out');
+                circleRing.classList.add('fade-out');
 
                 // クリックされたメニューアイコン自身を回転縮小消去
                 this.classList.add('clicked');
