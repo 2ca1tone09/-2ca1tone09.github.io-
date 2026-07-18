@@ -3,13 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WORKS | scaL_TONE</title>
+    <title>PORTFOLIO | scaL_TONE</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
             background-color: #ffffff; 
@@ -22,14 +18,22 @@
             justify-content: space-between;
             overflow-x: hidden;
             position: relative;
+            /* ページ遷移時のフェードアウト用 */
+            opacity: 1;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        body.page-fade-out {
+            opacity: 0 !important;
+            transform: translateY(-8px);
         }
         
-        /* 1. 左端にメニューボタンを固定したため、右端の現在地表示を担保するヘッダー */
+        /* ヘッダー：現在地表示（右寄せ） */
         header { 
             max-width: 1200px; 
             margin: 0 auto 80px; 
             display: flex; 
-            justify-content: flex-end; /* 右端のみに寄せて美しく対比させる */
+            justify-content: flex-end; 
             align-items: center;
             width: 100%;
             z-index: 100;
@@ -44,11 +48,7 @@
             text-transform: uppercase;
         }
 
-        /* 
-            【極上レスポンシブ固定（追従）メニューボタン】
-            スクロールしても左上に追従。
-            画面最大幅1200pxの左端にピタリとシンクロし、スマホ等では端から20pxの美しい位置をキープ。
-        */
+        /* 左上固定メニューボタン */
         .menu-trigger {
             position: fixed;
             top: 40px;
@@ -61,7 +61,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1100; /* サイドバーよりも手前に表示 */
+            z-index: 1100;
         }
 
         .menu-trigger img {
@@ -73,40 +73,21 @@
                         opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 初期状態: menu1.png (三本バー) がアクティブ、menu2.png (テトラポット) は回転して隠れる */
-        .menu-trigger .icon-default {
-            opacity: 1;
-            transform: rotate(0deg) scale(1);
-        }
+        .menu-trigger .icon-default { opacity: 1; transform: rotate(0deg) scale(1); }
+        .menu-trigger .icon-active { opacity: 0; transform: rotate(-180deg) scale(0.7); }
+        .menu-trigger.active .icon-default { opacity: 0; transform: rotate(180deg) scale(0.7); }
+        .menu-trigger.active .icon-active { opacity: 1; transform: rotate(0deg) scale(1); }
 
-        .menu-trigger .icon-active {
-            opacity: 0;
-            transform: rotate(-180deg) scale(0.7);
-        }
-
-        /* アクティブ（展開）状態: menu1.png がスピン消去、menu2.png がスピン登場 */
-        .menu-trigger.active .icon-default {
-            opacity: 0;
-            transform: rotate(180deg) scale(0.7);
-        }
-
-        .menu-trigger.active .icon-active {
-            opacity: 1;
-            transform: rotate(0deg) scale(1);
-        }
-
-        /* 
-            15〜20%の割合を占めるスライドイン・サイドバー（MENU-02.pngの完全再現）
-        */
+        /* スライドイン・サイドバー */
         .sidebar-menu {
             position: fixed;
             top: 0;
-            left: -260px; /* 初期状態は画面外に隠蔽 */
+            left: -260px;
             width: 240px;
             height: 100vh;
-            background-color: #eaeaea; /* カンプ通りのマットなライトグレー */
+            background-color: #eaeaea;
             z-index: 1000;
-            padding: 120px 30px 40px; /* 上部にテトラポットボタンの余白を担保 */
+            padding: 120px 30px 40px;
             display: flex;
             flex-direction: column;
             gap: 28px;
@@ -114,216 +95,85 @@
             box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
         }
 
-        .sidebar-menu.open {
-            left: 0; /* 滑らかに出現 */
-        }
+        .sidebar-menu.open { left: 0; }
 
-        /* サイドバー最上部のブランドマーク (menu2.pngをシンボル表示) */
-        .sidebar-logo {
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: flex-start;
-        }
+        .sidebar-logo { margin-bottom: 12px; display: flex; justify-content: flex-start; }
+        .sidebar-logo img { width: 32px; height: auto; object-fit: contain; }
 
-        .sidebar-logo img {
-            width: 32px;
-            height: auto;
-            object-fit: contain;
-        }
-
-        /* サイドバー内のリンク構造 */
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 22px;
-        }
-
+        .sidebar-nav { display: flex; flex-direction: column; gap: 22px; }
         .sidebar-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: #111111;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            padding: 6px 0;
-            position: relative;
+            display: flex; align-items: center; gap: 12px;
+            text-decoration: none; color: #111111;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.15em;
+            text-transform: uppercase; padding: 6px 0; position: relative;
         }
 
-        /* アイコンを包むラッパーコンテナを24pxで完全固定。これで文字の開始位置を完璧に揃える */
-        .sidebar-icon-wrapper {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
+        .sidebar-icon-wrapper { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .sidebar-icon { max-width: 16px; max-height: 16px; width: 100%; height: auto; object-fit: contain; opacity: 0.9; transition: transform 0.4s ease; }
+        .sidebar-item:hover .sidebar-icon { transform: scale(1.1); }
+        .sidebar-item.home-link .sidebar-icon { max-width: 22px; max-height: 22px; }
 
-        /* 指定された画像ファイルを呼び出すサイドバーアイコン用スタイル */
-        .sidebar-icon {
-            max-width: 16px;
-            max-height: 16px;
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-            opacity: 0.9;
-            transition: transform 0.4s ease;
-        }
-
-        .sidebar-item:hover .sidebar-icon {
-            transform: scale(1.1);
-        }
-
-        /* 【特注】HOMEアイコンのみ、お預かりしているサイズ感を活かすためにwrapper内で最大22pxまで拡張 */
-        .sidebar-item.home-link .sidebar-icon {
-            max-width: 22px;
-            max-height: 22px;
-        }
-
-        /* 
-           【完全に統一された長さと太さのアンダーバー】
-           すべてのメニュー、すべての状態（通常時・ホバー時・アクティブ時）において、
-           線の長さ（30px）と太さ（1px）をミリ単位で完全に均一に統一しました。
-           これにより、ミニマルなグリッドの規律がより一層際立ちます。
-        */
         .sidebar-item::after {
-            content: '';
-            position: absolute;
-            left: 36px; /* wrapper(24px) + margin(12px) の位置に完璧に固定 */
-            bottom: 0;
-            width: 30px; /* 完全に統一された固定長 */
-            height: 1px; /* 完全に統一された極細ライン */
-            background-color: #111111;
-            opacity: 0; /* 通常時は静寂を保つために非表示 */
-            transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            content: ''; position: absolute; left: 36px; bottom: 0;
+            width: 30px; height: 1px; background-color: #111111;
+            opacity: 0; transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
+        .sidebar-item:hover::after, .sidebar-item.active-link::after { opacity: 1; }
 
-        /* ホバー時に同じ長さ・太さのまま美しくフェードイン */
-        .sidebar-item:hover::after {
-            opacity: 1;
-        }
-
-        /* アクティブなページ（WORKS）も同じ長さ・太さのまま常時表示 */
-        .sidebar-item.active-link::after {
-            opacity: 1;
-        }
-
-        /* 背景のソフトな暗幕（メインコンテンツに集中させるための薄いレイヤー） */
+        /* 暗幕 */
         .menu-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(2px);
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(255, 255, 255, 0.4); backdrop-filter: blur(2px);
+            z-index: 999; opacity: 0; pointer-events: none;
             transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
+        .menu-backdrop.show { opacity: 1; pointer-events: auto; }
 
-        .menu-backdrop.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        /* 2. 12カラムギャラリーのグリッドコンテナ */
-        .works-grid { 
+        /* 3カラム構成のギャラリーコンテナ */
+        .portfolio-container { 
             display: grid; 
             grid-template-columns: repeat(12, 1fr); 
             gap: 20px; 
-            max-width: 1000px; 
+            max-width: 1100px; 
             margin: 0 auto; 
             padding: 45px 0; 
+            border-top: 1px solid #111111; 
             width: 100%;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* メニュー開閉時のシフト移動アニメーション */
-        }
-        
-        /* 3. 各ワークアイテムの共通設計（参考画像の境界線グリッドを再現） */
-        .work-item { 
-            position: relative; 
-            text-decoration: none; 
-            display: block; 
-            margin-bottom: 140px; /* 余白をより贅沢に広げて緊張感を持たせる */
-            border-top: 1px solid #111111; /* アイテム幅に同期する美しい水平境界線 */
-            padding-top: 25px; /* 線と画像の間の余白 */
-            
-            /* ロード時の滑らかな順番フェードインのための初期状態 */
             opacity: 0;
             transform: translateY(15px);
-            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), 
-                        transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* フェードイン表示クラス */
-        .work-item.visible {
-            opacity: 1;
-            transform: translateY(0);
+            animation: fadeInContent 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
         
-        /* ラベル（参考画像のように線の上に直接乗るように精密配置） */
-        .work-label { 
-            position: absolute;
-            top: -1px; /* 境界線の真上に乗せる */
-            transform: translateY(-100%); /* 線より上へ逃がす */
-            display: block; 
+        /* 左カラム：セクションラベル */
+        .portfolio-label { 
+            grid-column: 1 / 3; 
             font-size: 10px; 
             letter-spacing: 0.15em; 
-            color: #111111; 
-            padding-bottom: 6px; 
-            font-weight: 500; 
-            text-transform: uppercase; 
-            transition: opacity 0.3s ease;
-        }
-        
-        /* 画像ボックス（枠線を完全に廃止し、アートブックのモノクロカットのような佇まいに） */
-        .image-box { 
-            overflow: hidden; 
-            background-color: #fafafa;
-        }
-        
-        .image-box img { 
-            width: 100%; 
-            height: auto; 
-            display: block; 
-            filter: grayscale(100%); 
-            transition: filter 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
-                        transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        
-        /* ホバーインタラクション */
-        .work-item:hover img, .work-item:active img { 
-            filter: grayscale(0%); 
-            transform: scale(1.03); 
-        }
-
-        /* ホバー時に境界線の存在感を少し高める、あるいは変化させる繊細な演出 */
-        .work-item {
-            transition: border-color 0.4s ease;
-        }
-        .work-item:hover {
-            border-color: #888888;
-        }
-        
-        /* 建築学生時代の課題・ポートフォリオ用の特別な固定スタイル */
-        .portfolio-item {
-            grid-column: 3 / 11 !important; 
-            margin-top: 100px !important;
-            margin-bottom: 20px !important;
-            border-top: 1px solid #888888; /* ポートフォリオは少しトーンを落とした細いグレー線 */
-        }
-
-        .portfolio-item .work-label {
             color: #888888; 
+            text-transform: uppercase; 
+            font-weight: 500;
         }
         
-        /* 4. 最下部のBack to home（他ページと完全統一） */
+        /* 中央カラム：画像を大きく縦に並べるエリア */
+        /* 12カラム中、3〜11カラムを使用して贅沢な幅を持たせる */
+        .portfolio-images { 
+            grid-column: 3 / 11; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 60px; /* 画像と画像の間の余白を広めに取って美しく見せる */
+        }
+        
+        .portfolio-images img {
+            width: 100%;
+            height: auto;
+            display: block;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 紙のようなわずかな浮遊感 */
+        }
+        
+        /* フッター（戻るボタン） */
         footer {
-            margin-top: 60px;
+            margin-top: 120px;
             text-align: center;
             width: 100%;
         }
@@ -338,30 +188,32 @@
             padding-bottom: 4px;
             transition: opacity 0.3s ease;
             text-transform: uppercase;
+            position: relative;
         }
         
-        .back-link:hover {
-            opacity: 0.5;
+        .back-link::before {
+            content: ''; position: absolute; top: -15px; bottom: -15px; left: -25px; right: -25px;
         }
+        .back-link:hover { opacity: 0.5; }
         
-        /* モバイル対応：自動的にグリッドをリセットして読みやすい縦スクロールに変更 */
+        /* アニメーション */
+        @keyframes fadeInContent {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* モバイル対応（1カラムに再構築） */
         @media (max-width: 768px) { 
-            .works-grid { 
-                display: flex;
-                flex-direction: column;
-                gap: 70px;
+            .portfolio-container { 
+                display: flex; 
+                flex-direction: column; 
+                gap: 40px;
             } 
-            .work-item {
-                width: 100% !important;
-                margin-top: 0 !important;
-                margin-bottom: 20px !important;
-                transform: none !important;
-                border-top: 1px solid #eeeeee;
+            .portfolio-label {
+                margin-bottom: -10px;
             }
-            .work-label {
-                position: static;
-                transform: none;
-                margin-bottom: 8px;
+            .portfolio-images {
+                gap: 30px;
             }
         }
     </style>
@@ -371,162 +223,116 @@
     <!-- 背景の薄暗いオーバーレイレイヤー -->
     <div class="menu-backdrop" id="menu-backdrop"></div>
 
-    <!-- ヘッダー：右上に現在地表示（メニューボタンはfixed化したため、位置調整） -->
+    <!-- ヘッダー -->
     <header>
-        <!-- menu1.png ⇄ menu2.png プレミアム変形メニューボタン（fixedで画面に完全追従） -->
+        <!-- メニューボタン -->
         <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
             <img src="/assets/menu1.png" alt="Open Menu" class="menu-icon icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
             <img src="/assets/menu2.png" alt="Close Menu" class="menu-icon icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
         </button>
 
-        <div class="current-page">WORKS</div>
+        <div class="current-page">PORTFOLIO</div>
     </header>
 
-    <!-- スライドインするライトグレーサイドバー（MENU-02.pngを完全模写） -->
+    <!-- サイドバー -->
     <aside class="sidebar-menu" id="sidebar-menu">
-        <!-- サイドバー最上部にテトラポットシンボルを美しく配置 -->
         <div class="sidebar-logo">
             <img src="/assets/menu2.png" alt="scaL_TONE Symbol" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=Y';">
         </div>
         <nav class="sidebar-nav">
-            <!-- 
-                【書き換え可能な画像タグ仕様のサイドバーアイコン】
-                ご指定の画像ファイルのパスに変更してください。
-                assetsフォルダ等から各画像ファイルを読み込みます（デフォルトは、トップページの呼び出し構造に合わせて設定しています）。
-                もし画像がまだアップロードされていない場合でも、onerrorによってデザイン崩れを防ぐプレースホルダーが自動的に作動します。
-            -->
-            
-            <!-- HOME (特注：home-linkクラスを追加してアイコンを大きめに調整) -->
             <a href="index.html" class="sidebar-item home-link">
-                <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/ffffff?text=H';" alt="">
-                </div>
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="/assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/ffffff?text=H';" alt=""></div>
                 HOME
             </a>
-            <!-- ABOUT -->
             <a href="about.html" class="sidebar-item">
-                <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=A';" alt="">
-                </div>
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="/assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=A';" alt=""></div>
                 ABOUT
             </a>
-            <!-- SHOP -->
             <a href="shop.html" class="sidebar-item">
-                <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=S';" alt="">
-                </div>
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="/assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=S';" alt=""></div>
                 SHOP
             </a>
-            <!-- NEWS -->
             <a href="news.html" class="sidebar-item">
-                <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=N';" alt="">
-                </div>
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="/assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=N';" alt=""></div>
                 NEWS
             </a>
-            <!-- WORKS (Active) -->
+            <!-- ポートフォリオはWorksの一部として扱うため、WORKSをアクティブに設定 -->
             <a href="works.html" class="sidebar-item active-link">
-                <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=W';" alt="">
-                </div>
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="/assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=W';" alt=""></div>
                 WORKS
             </a>
-            <!-- CONTACT -->
             <a href="contact.html" class="sidebar-item">
-                <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=C';" alt="">
-                </div>
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="/assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=C';" alt=""></div>
                 CONTACT
             </a>
         </nav>
     </aside>
 
-    <!-- メイン：作品グリッドエリア -->
-    <main class="works-grid" id="works-grid">
-
-        <!-- ==========================================
-             ▼ ここから通常プロジェクト（追加用フォーマット）
-             新しい作品を増やしたい場合は、以下のブロックをコピペして増やすだけで
-             配置は完全に自動（非対称＆ズレ）で構築されます。
-             ========================================== -->
-
-        <a href="project/project1.html" class="work-item">
-            <span class="work-label">Project No.01</span>
-            <div class="image-box">
-                <img src="/assets/p1.png" alt="">
+    <!-- メインコンテンツ：3カラム構造 -->
+    <main>
+        <div class="portfolio-container" id="main-content">
+            <!-- 左カラム -->
+            <div class="portfolio-label">Architectural Portfolio</div>
+            
+            <!-- 中央カラム（画像を縦に羅列） -->
+            <!-- プレースホルダーはポートフォリオでよくあるA4縦/横の比率に近いサイズを設定しています -->
+            <div class="portfolio-images">
+                <img src="/assets/portfolio/pot01.png" alt="Portfolio Page 01" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot01.png';">
+                <img src="/assets/portfolio/pot02.png" alt="Portfolio Page 02" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot02.png';">
+                <img src="/assets/portfolio/pot03.png" alt="Portfolio Page 03" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot03.png';">
+                <img src="/assets/portfolio/pot04.png" alt="Portfolio Page 04" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot04.png';">
+                <img src="/assets/portfolio/pot05.png" alt="Portfolio Page 05" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot05.png';">
+                <img src="/assets/portfolio/pot06.png" alt="Portfolio Page 06" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot06.png';">
+                <img src="/assets/portfolio/pot07.png" alt="Portfolio Page 07" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot07.png';">
+                <img src="/assets/portfolio/pot08.png" alt="Portfolio Page 08" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot08.png';">
+                <img src="/assets/portfolio/pot09.png" alt="Portfolio Page 09" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot09.png';">
+                <img src="/assets/portfolio/pot10.png" alt="Portfolio Page 10" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot10.png';">
+                <img src="/assets/portfolio/pot11.png" alt="Portfolio Page 11" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot11.png';">
+                <img src="/assets/portfolio/pot12.png" alt="Portfolio Page 12" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot12.png';">
+                <img src="/assets/portfolio/pot13.png" alt="Portfolio Page 13" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot13.png';">
+                <img src="/assets/portfolio/pot14.png" alt="Portfolio Page 14" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot14.png';">
+                <img src="/assets/portfolio/pot15.png" alt="Portfolio Page 15" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot15.png';">
+                <img src="/assets/portfolio/pot16.png" alt="Portfolio Page 16" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot16.png';">
             </div>
-        </a>
-
-        <a href="project/project2.html" class="work-item">
-            <span class="work-label">Creative Work 02</span>
-            <div class="image-box">
-                <img src="/assets/P2.jpg" alt="">
-            </div>
-        </a>
-
-        <a href="project/project3.html" class="work-item">
-            <span class="work-label">Design Study 03</span>
-            <div class="image-box">
-                <img src="/assets/p3.png" alt="">
-            </div>
-        </a>
-
-        <!-- ここにコピペするだけで作品が自動調整されて増えていきます -->
-
-        <!-- ==========================================
-             ▲ 通常プロジェクトエリア終わり
-             ========================================== -->
-
-
-        <!-- ==========================================
-             ★ 建築学生時代の課題・ポートフォリオ（常に最下部に美しく固定されます）
-             ========================================== -->
-        <a href="portfolio.html" class="work-item portfolio-item">
-            <span class="work-label">Architectural Portfolio</span>
-            <div class="image-box">
-                <!-- assetsフォルダから読み込みます。画像がない場合も logo2.png が自動代替される設計です -->
-                <img src="/assets/portfolio_main.png" alt="Student Portfolio" onerror="this.src='/assets/logo2.png'">
-            </div>
-        </a>
-
+        </div>
     </main>
 
-    <!-- フッター：他ページと完全共通 -->
+    <!-- フッター -->
     <footer>
         <a href="works.html" class="back-link">Back to Works</a>
     </footer>
 
-    <!-- ランダム自動レイアウト ＆ シーケンシャルフェードインエンジン ＆ メニュー開閉処理 -->
+    <!-- メニュー開閉・ページ遷移インタラクションJavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const trigger = document.getElementById('menu-trigger');
             const menu = document.getElementById('sidebar-menu');
             const backdrop = document.getElementById('menu-backdrop');
-            const grid = document.getElementById('works-grid');
-            
-            // 1. メニュー開閉・ページ遷移インタラクション
+            const mainContent = document.getElementById('main-content');
+            const backLink = document.querySelector('.back-link');
+
+            // 1. メニュー開閉時のトグル処理
             function toggleMenu() {
                 const isOpen = menu.classList.toggle('open');
                 trigger.classList.toggle('active');
                 backdrop.classList.toggle('show');
 
-                // メニューが展開されたら作品グリッド全体を右側にシフトさせて対比空間を演出
+                // メニュー展開時、メインエリアを少し右側にシフトさせて緊張感を演出
                 if (isOpen) {
-                    document.body.style.overflow = 'hidden'; // 背景スクロール禁止
+                    document.body.style.overflow = 'hidden';
                     if (window.innerWidth > 768) {
-                        grid.style.transform = 'translateX(60px)';
+                        mainContent.style.transform = 'translateX(60px)';
                     }
                 } else {
                     document.body.style.overflow = '';
-                    grid.style.transform = 'translateX(0)';
+                    mainContent.style.transform = 'translateX(0)';
                 }
             }
 
-            // クリックイベントの登録
             trigger.addEventListener('click', toggleMenu);
             backdrop.addEventListener('click', toggleMenu);
 
-            // メニュー展開時のリンククリック時にフェードアウトをかける処理
+            // 2. サイドバー内のリンククリック時：優雅なフェードアウト遷移
             const links = document.querySelectorAll('.sidebar-item');
             links.forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -534,13 +340,11 @@
                     if (targetUrl && targetUrl !== '#') {
                         e.preventDefault();
                         
-                        // サイドバーを引っ込めて暗幕を解除
                         menu.classList.remove('open');
                         trigger.classList.remove('active');
                         backdrop.classList.remove('show');
-                        grid.style.transform = 'translateX(0)';
+                        mainContent.style.transform = 'translateX(0)';
                         
-                        // 優雅なフェードアウトの後に遷移
                         setTimeout(() => {
                             window.location.href = targetUrl;
                         }, 500); 
@@ -548,53 +352,17 @@
                 });
             });
 
-            // 2. ランダム自動レイアウト処理
-            // 通常のアイテムをすべて取得（ポートフォリオアイテムは除く）
-            const items = Array.from(grid.querySelectorAll('.work-item:not(.portfolio-item)'));
-            const portfolioItem = grid.querySelector('.portfolio-item');
-
-            // 【画像縮小・段違いグリッド】参考画像の、線の美しさとアシンメトリーが極大化するパターン
-            const layoutPatterns = [
-                { gridColumn: '2 / 7', marginTop: '0px' },       // パターンA: 5カラム（やや左、1カラム空け）
-                { gridColumn: '8 / 12', marginTop: '-60px' },    // パターンB: 4カラム（右寄せ、線と高さが隣と大胆にズレる）
-                { gridColumn: '4 / 10', marginTop: '70px' },     // パターンC: 6カラム（中央、上下に贅沢な空白を発生させる）
-                { gridColumn: '2 / 6', marginTop: '10px' },      // パターンD: 4カラム（小さく上品に）
-                { gridColumn: '7 / 12', marginTop: '-30px' },    // パターンE: 5カラム（右寄り）
-                { gridColumn: '5 / 9', marginTop: '80px' },      // パターンF: 4カラム（完全に中寄せして左右に広大なホワイトスペース）
-                { gridColumn: '3 / 8', marginTop: '20px' },      // パターンG: 5カラム
-                { gridColumn: '9 / 12', marginTop: '-40px' }     // パターンH: 3カラム（右端に極めてコンパクトに配置、余白を増幅）
-            ];
-
-            // パターン配列をランダムにシャッフルするアルゴリズム
-            function shuffle(array) {
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
-                }
-                return array;
-            }
-
-            // ロード毎にパターンの組み合わせをシャッフル
-            const randomizedPatterns = shuffle([...layoutPatterns]);
-
-            // 各アイテムにスタイルを適用（パターンの数がアイテムより少なくてもループして繰り返します）
-            items.forEach((item, index) => {
-                const pattern = randomizedPatterns[index % randomizedPatterns.length];
-                
-                // 横幅の広さやズレをインラインスタイルで動的に注入
-                item.style.gridColumn = pattern.gridColumn;
-                item.style.marginTop = pattern.marginTop;
-            });
-
-            // すべてのアイテム（ポートフォリオを含む）を順番に滑らかにフェードイン
-            const allItems = [...items, portfolioItem];
-            allItems.forEach((item, index) => {
-                if (item) {
+            // 3. フッターのBackリンククリック時：ページ全体をフェードアウト
+            if (backLink) {
+                backLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetUrl = this.getAttribute('href');
+                    document.body.classList.add('page-fade-out');
                     setTimeout(() => {
-                        item.classList.add('visible');
-                    }, index * 180); // 180msで小気味よくウェーブするように展開
-                }
-            });
+                        window.location.href = targetUrl;
+                    }, 500);
+                });
+            }
         });
     </script>
 </body>
