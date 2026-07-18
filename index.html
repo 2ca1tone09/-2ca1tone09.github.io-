@@ -54,7 +54,7 @@
         }
         
         .logo {
-            max-width: 180px;
+            max-width: 200px;
             width: 100%;
             height: auto;
             cursor: pointer;
@@ -160,11 +160,11 @@
             opacity: 0;
         }
 
-        /* ページ遷移時：クリックされなかった他のメニューは下に落ちながら静かにフェードアウト */
+        /* ページ遷移時：クリックされなかった他のメニューは下に落ちながら静かに0.5sでフェードアウト */
         .nav-item.fade-out {
             opacity: 0 !important;
             transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty) + 15px)) scale(0.9) !important;
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         /* ページ遷移時：ロゴと円も一緒に静かに消去 */
@@ -220,7 +220,7 @@
             CONTACT: 0度 (右端)
         -->
         <nav class="nav-menu">
-            <a href="about.html" class="nav-item" style="--tx: -240px; --ty: 0px; --delay: 0.0s;">
+            <a href="about.html" class="nav-item" style="--tx: -230px; --ty: 0px; --delay: 0.0s;">
                 <img src="/assets/about2.png" alt="" class="nav-icon" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=A';">
                 <span class="nav-label">ABOUT</span>
             </a>
@@ -236,7 +236,7 @@
                 <img src="/assets/work2.png" alt="" class="nav-icon" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=W';">
                 <span class="nav-label">WORKS</span>
             </a>
-            <a href="contact.html" class="nav-item" style="--tx: 240px; --ty: 0px; --delay: 0.2s;">
+            <a href="contact.html" class="nav-item" style="--tx: 230px; --ty: 0px; --delay: 0.2s;">
                 <img src="/assets/contact2.png" alt="" class="nav-icon" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=C';">
                 <span class="nav-label">CONTACT</span>
             </a>
