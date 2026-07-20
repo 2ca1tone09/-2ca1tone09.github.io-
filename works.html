@@ -3,52 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 【設定：ページタイトル】 ブラウザのタブに表示されるブランド名とページ名 -->
     <title>WORKS | scaL_TONE</title>
+    
+    <!-- 【設定：外部フォントの読み込み】 
+         ブランドの標準フォントであるモダンな「Arimo」と、技術的・構築的な雰囲気を持つ等幅の「Azeret Mono」を採用 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Azeret+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    
     <style>
+        /* 【設定：デザインシステム共通変数（CSS Variables）】
+           サイト全体で統一された色調、フォント、アニメーションの速度を一元管理します */
+        :root {
+            --bg-color: #ffffff;             /* 背景色：清潔感のあるピュアホワイト */
+            --text-primary: #111111;         /* 主要文字：コントラストの強いディープブラック */
+            --text-secondary: #555555;       /* 補助文字：可読性の高いミディアムグレー */
+            --text-muted: #888888;           /* 控えめな文字：補足やメタデータ用のライトグレー */
+            --accent-color: #eaeaea;         /* アクセント色：サイドバー背景などに使用するマットライトグレー */
+            --border-color: #111111;         /* 境界線：強弱を明確にするためのシャープな黒線 */
+            --font-sans: 'Arimo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; /* サンセリフフォント */
+            --font-mono: 'Azeret Mono', monospace; /* 等幅フォント */
+            --transition-smooth: 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* 贅沢で吸い付くようなイージング（0.6秒） */
+        }
+
+        /* 【設定：グローバルリセット】
+           ブラウザ間の余白やボックス解釈の差異を排除し、ミリ単位のグリッド設計を正確に再現 */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
         
+        /* 【設定：全体ボディ（BODY）】
+           ページ全体のベースラインを設定。フッターを最下部に押し出すためflexレイアウトを適用 */
         body { 
-            background-color: #ffffff; 
-            color: #111111; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-primary); 
+            font-family: var(--font-sans); 
             padding: 40px 20px 100px; 
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             overflow-x: hidden;
             position: relative;
+            /* 起動時およびページロード時の透明度と位置の初期設定（0.6秒かけて滑らかにフェードイン） */
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
         
-        /* 1. 左端にメニューボタンを固定したため、右端の現在地表示を担保するヘッダー */
-        header { 
-            max-width: 1200px; 
-            margin: 0 auto 80px; 
-            display: flex; 
-            justify-content: flex-end; /* 右端のみに寄せて美しく対比させる */
-            align-items: center;
-            width: 100%;
-            z-index: 100;
+        /* 【設定：ページフェードアウトクラス】
+           リンククリック時にこのクラスがボディに付与され、project1同様に美しく消えていく遷移を実現します */
+        body.page-fade-out {
+            opacity: 0 !important;
+            transform: translateY(-8px);
         }
         
-        .current-page { 
-            font-size: 10px; 
-            letter-spacing: 0.2em; 
-            font-weight: 700; 
-            border-bottom: 1px solid #111111; 
-            padding-bottom: 4px; 
-            text-transform: uppercase;
-        }
-
-        /* 
-            【極上レスポンシブ固定（追従）メニューボタン】
-            スクロールしても左上に追従。
-            画面最大幅1200pxの左端にピタリとシンクロし、スマホ等では端から20pxの美しい位置をキープ。
-        */
+        /* 【設定：極上レスポンシブ固定（追従）メニューボタン】
+           スクロールしても左上に追従。
+           画面最大幅1200pxの左端にピタリとシンクロし、スマホ等では端から20pxの美しい位置をキープ。 */
         .menu-trigger {
             position: fixed;
             top: 40px;
@@ -61,19 +75,23 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1100; /* サイドバーよりも手前に表示 */
+            z-index: 1100; /* スライドインするサイドバーよりも常に手前に表示させて操作性を担保 */
+            outline: none;
+            -webkit-tap-highlight-color: transparent; /* モバイル端末でのタップ時ハイライト青枠を消去 */
         }
 
+        /* 【設定：メニューボタン内の画像パーツ制御】
+           三本線バー（menu1.png）とテトラポット（menu2.png）の2つの画像を重ねて配置 */
         .menu-trigger img {
             position: absolute;
             width: 26px;
             height: auto;
             object-fit: contain;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
-                        opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform var(--transition-smooth), opacity var(--transition-smooth);
         }
 
-        /* 初期状態: menu1.png (三本バー) がアクティブ、menu2.png (テトラポット) は回転して隠れる */
+        /* 【設定：初期状態（通常時）】
+           menu1.png（三本線）が完全表示され、menu2.png（テトラポット）は反時計回りに回転して隠れた状態 */
         .menu-trigger .icon-default {
             opacity: 1;
             transform: rotate(0deg) scale(1);
@@ -84,7 +102,8 @@
             transform: rotate(-180deg) scale(0.7);
         }
 
-        /* アクティブ（展開）状態: menu1.png がスピン消去、menu2.png がスピン登場 */
+        /* 【設定：アクティブ（サイドバー展開時）状態】
+           menu1.pngが時計回りにスピンしながら消去され、入れ替わりでテトラポット（menu2.png）がスピン登場 */
         .menu-trigger.active .icon-default {
             opacity: 0;
             transform: rotate(180deg) scale(0.7);
@@ -95,30 +114,31 @@
             transform: rotate(0deg) scale(1);
         }
 
-        /* 
-            15〜20%の割合を占めるスライドイン・サイドバー（MENU-02.pngの完全再現）
-        */
+        /* 【設定：15〜20%の割合を占めるスライドイン・サイドバー（MENU-02.pngの完全再現）】
+           初期状態は画面の左外側（-260px）に隠蔽され、クラス付与で滑らかに出現 */
         .sidebar-menu {
             position: fixed;
             top: 0;
-            left: -260px; /* 初期状態は画面外に隠蔽 */
+            left: -260px; 
             width: 240px;
             height: 100vh;
-            background-color: #eaeaea; /* カンプ通りのマットなライトグレー */
+            background-color: var(--accent-color); /* カンプ通りのマットなライトグレー */
             z-index: 1000;
-            padding: 120px 30px 40px; /* 上部にテトラポットボタンの余白を担保 */
+            padding: 120px 30px 40px; /* 上部にテトラポットボタンの余白を贅沢に確保 */
             display: flex;
             flex-direction: column;
             gap: 28px;
-            transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
+            transition: left var(--transition-smooth);
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02); /* 境界を感じさせない極小のソフトな陰影 */
         }
 
+        /* 【設定：サイドバー開閉のトグル状態】 */
         .sidebar-menu.open {
-            left: 0; /* 滑らかに出現 */
+            left: 0; /* 滑らかに画面内にスライドイン */
         }
 
-        /* サイドバー最上部のブランドマーク (menu2.pngをシンボル表示) */
+        /* 【設定：サイドバー最上部のブランドマーク】
+           menu2.png（テトラポットシンボル）を左寄せで美しく静置 */
         .sidebar-logo {
             margin-bottom: 12px;
             display: flex;
@@ -131,7 +151,7 @@
             object-fit: contain;
         }
 
-        /* サイドバー内のリンク構造 */
+        /* 【設定：サイドバー内のリンク構造】 */
         .sidebar-nav {
             display: flex;
             flex-direction: column;
@@ -143,7 +163,7 @@
             align-items: center;
             gap: 12px;
             text-decoration: none;
-            color: #111111;
+            color: var(--text-primary);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.15em;
@@ -152,7 +172,8 @@
             position: relative;
         }
 
-        /* アイコンを包むラッパーコンテナを24pxで完全固定。これで文字の開始位置を完璧に揃える */
+        /* 【設定：サイドバーアイコンを包むラッパーコンテナ】
+           アイコンサイズに左右されず、文字の開始位置を完璧に「縦一列」に揃えるための24px固定領域 */
         .sidebar-icon-wrapper {
             width: 24px;
             height: 24px;
@@ -162,7 +183,7 @@
             flex-shrink: 0;
         }
 
-        /* 指定された画像ファイルを呼び出すサイドバーアイコン用スタイル */
+        /* 【設定：各サイドバーアイコン（画像読み込み）の基本サイズ】 */
         .sidebar-icon {
             max-width: 16px;
             max-height: 16px;
@@ -173,22 +194,21 @@
             transition: transform 0.4s ease;
         }
 
+        /* 【設定：ホバーインタラクション】 ホバーしたアイコンがわずかに膨らみ、鼓動のような有機性を演出 */
         .sidebar-item:hover .sidebar-icon {
             transform: scale(1.1);
         }
 
-        /* 【特注】HOMEアイコンのみ、お預かりしているサイズ感を活かすためにwrapper内で最大22pxまで拡張 */
+        /* 【設定：特注HOMEアイコン補正】 
+           お預かりしている画像アセットのバランスを活かし、HOMEのみアイコンラッパー内の最大サイズを22pxに拡張 */
         .sidebar-item.home-link .sidebar-icon {
             max-width: 22px;
             max-height: 22px;
         }
 
-        /* 
-           【完全に統一された長さと太さのアンダーバー】
+        /* 【設定：完全に統一された長さと太さのアンダーバー】
            すべてのメニュー、すべての状態（通常時・ホバー時・アクティブ時）において、
-           線の長さ（30px）と太さ（1px）をミリ単位で完全に均一に統一しました。
-           これにより、ミニマルなグリッドの規律がより一層際立ちます。
-        */
+           線の長さ（30px）と太さ（1px）をミリ単位で完全に均一に統一。ミニマルなグリッドの規律を強調 */
         .sidebar-item::after {
             content: '';
             position: absolute;
@@ -196,22 +216,20 @@
             bottom: 0;
             width: 30px; /* 完全に統一された固定長 */
             height: 1px; /* 完全に統一された極細ライン */
-            background-color: #111111;
+            background-color: var(--text-primary);
             opacity: 0; /* 通常時は静寂を保つために非表示 */
             transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         /* ホバー時に同じ長さ・太さのまま美しくフェードイン */
-        .sidebar-item:hover::after {
-            opacity: 1;
-        }
-
-        /* アクティブなページ（WORKS）も同じ長さ・太さのまま常時表示 */
+        .sidebar-item:hover::after, 
         .sidebar-item.active-link::after {
             opacity: 1;
         }
 
-        /* 背景のソフトな暗幕（メインコンテンツに集中させるための薄いレイヤー） */
+        /* 【設定：メニュー背景のソフトな暗幕】
+           サイドバーが開いた際、メインコンテンツの背後に広がる白ベースのシースルーレイヤー。
+           背後のコンテンツを薄く残しつつフォーカスをメニューに集中させます */
         .menu-backdrop {
             position: fixed;
             top: 0;
@@ -219,73 +237,149 @@
             width: 100vw;
             height: 100vh;
             background-color: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px); /* 現代的なすりガラス効果 */
             z-index: 999;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: opacity var(--transition-smooth);
         }
 
         .menu-backdrop.show {
             opacity: 1;
-            pointer-events: auto;
+            pointer-events: auto; /* 暗幕エリアをタップしてメニューを閉じることを可能にします */
+        }
+
+        /* 【設定：ヘッダー】 右上に現在地を表示し、左上のメニューと完璧な左右対比を構成 */
+        header { 
+            max-width: 1200px; 
+            margin: 0 auto 60px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            width: 100%;
+            z-index: 100;
+        }
+
+        /* 【設定：フィルターコンテナ】 
+           等幅フォント「Azeret Mono」を採用。左上のメニューボタンの干渉を防ぐため十分な左余白を確保 */
+        .filters-container {
+            display: flex;
+            gap: 20px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-left: 60px; 
+        }
+
+        /* 【設定：フィルターボタン】 
+           ミニマルなテキストリンク形式。アクティブまたはホバーで境界線が浮かび上がります */
+        .filter-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            text-transform: uppercase;
+            padding-bottom: 2px;
+            border-bottom: 1px solid transparent;
+            transition: color 0.3s ease, border-color 0.3s ease;
+            outline: none;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--border-color);
         }
         
-        /* 2. 12カラムギャラリーのグリッドコンテナ */
+        /* 【設定：現在地表示（ヘッダー右端）】
+           10pxの極小フォントと極細ラインで現在地をさりげなく主張 */
+        .current-page { 
+            font-size: 10px; 
+            letter-spacing: 0.2em; 
+            font-weight: 700; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 4px; 
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+        }
+
+        /* 【設定：WORKSグリッド構造】
+           12カラムのグリッド。JavaScriptの「非対称レイアウトエンジン」により、各アイテムが動的に不規則に配置されます */
         .works-grid { 
             display: grid; 
             grid-template-columns: repeat(12, 1fr); 
             gap: 20px; 
             max-width: 1000px; 
             margin: 0 auto; 
-            padding: 45px 0; 
+            padding: 20px 0; 
             width: 100%;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* メニュー開閉時のシフト移動アニメーション */
+            transition: transform var(--transition-smooth); /* メニュー展開時にコンテンツ全体がエレガントに右へシフト */
         }
         
-        /* 3. 各ワークアイテムの共通設計（参考画像の境界線グリッドを再現） */
+        /* 【設定：個別作品枠】
+           各アイテムの上部を1pxの黒細線で区切り、アートブックのような知的な緊張感を創出 */
         .work-item { 
             position: relative; 
             text-decoration: none; 
             display: block; 
-            margin-bottom: 140px; /* 余白をより贅沢に広げて緊張感を持たせる */
-            border-top: 1px solid #111111; /* アイテム幅に同期する美しい水平境界線 */
-            padding-top: 25px; /* 線と画像の間の余白 */
-            
-            /* ロード時の滑らかな順番フェードインのための初期状態 */
+            margin-bottom: 140px; 
+            border-top: 1px solid var(--text-primary); 
+            padding-top: 25px; 
+            /* 初期状態：ロード時にフワッと浮き上がるアニメーション用の値 */
             opacity: 0;
-            transform: translateY(15px);
-            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), 
-                        transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(20px);
+            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), 
+                        transform 1.2s cubic-bezier(0.25, 1, 0.5, 1),
+                        border-color 0.4s ease;
         }
 
-        /* フェードイン表示クラス */
+        /* フェードインアニメーション適用時 */
         .work-item.visible {
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* 【設定：フィルターアウト状態】
+           非表示になったコンテンツが空間を崩さないよう、滑らかに縮小消去され、物理的な幅・高さをゼロにします */
+        .work-item.filtered-out {
+            opacity: 0 !important;
+            transform: scale(0.95) translateY(10px) !important;
+            pointer-events: none;
+            position: absolute;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
         
-        /* ラベル（参考画像のように線の上に直接乗るように精密配置） */
+        /* 【設定：作品番号・ラベル】 
+           黒い区切り線の上にぴったりと重なるよう、ネガティブトランスフォームで垂直配置調整 */
         .work-label { 
             position: absolute;
-            top: -1px; /* 境界線の真上に乗せる */
-            transform: translateY(-100%); /* 線より上へ逃がす */
+            top: -1px; 
+            transform: translateY(-100%); 
             display: block; 
             font-size: 10px; 
             letter-spacing: 0.15em; 
-            color: #111111; 
+            color: var(--text-primary); 
             padding-bottom: 6px; 
             font-weight: 500; 
             text-transform: uppercase; 
-            transition: opacity 0.3s ease;
+            font-family: var(--font-mono);
         }
         
-        /* 画像ボックス（枠線を完全に廃止し、アートブックのモノクロカットのような佇まいに） */
+        /* 【設定：イメージマスクボックス】
+           ホバー時の画像ズームがはみ出さないよう、外枠（マスク）として機能します */
         .image-box { 
             overflow: hidden; 
             background-color: #fafafa;
+            position: relative;
         }
         
+        /* 【設定：イメージ自体の表現】 
+           通常時はノイズのないストイックなモノクロ（grayscale 100%）。ホバーにより極めて微細に拡大しながら色を取り戻します */
         .image-box img { 
             width: 100%; 
             height: auto; 
@@ -294,68 +388,125 @@
             transition: filter 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
                         transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
+
+        /* 【設定：ホバー時の洗練された「＋」マーク演出】
+           画像の上にカーソルを置くと、中央に極めてモダンなプラス記号が浮き上がります */
+        .image-box::before {
+            content: '+';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-family: var(--font-mono);
+            font-size: 18px;
+            color: #ffffff;
+            background-color: var(--text-primary);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 2;
+            pointer-events: none;
+        }
         
-        /* ホバーインタラクション */
-        .work-item:hover img, .work-item:active img { 
+        /* ホバーおよびタップ（アクティブ）時のトランジション発火設定 */
+        .work-item:hover img, 
+        .work-item:active img { 
             filter: grayscale(0%); 
             transform: scale(1.03); 
         }
 
-        /* ホバー時に境界線の存在感を少し高める、あるいは変化させる繊細な演出 */
-        .work-item {
-            transition: border-color 0.4s ease;
+        .work-item:hover .image-box::before {
+            opacity: 1;
+            transform: scale(1);
         }
+
         .work-item:hover {
-            border-color: #888888;
+            border-color: var(--text-secondary);
         }
         
-        /* 建築学生時代の課題・ポートフォリオ用の特別な固定スタイル */
+        /* 【設定：ポートフォリオ特注ブロック】
+           最下部に配置される「縦長のポートフォリオPDF案内枠」。
+           非対称性を完成させるために中央付近（3〜11カラム）を独占し、上下の余白を極限まで引き伸ばして設計。 */
         .portfolio-item {
             grid-column: 3 / 11 !important; 
             margin-top: 100px !important;
             margin-bottom: 20px !important;
-            border-top: 1px solid #888888; /* ポートフォリオは少しトーンを落とした細いグレー線 */
+            border-top: 1px solid var(--text-muted); 
         }
 
         .portfolio-item .work-label {
-            color: #888888; 
+            color: var(--text-muted); 
         }
         
-        /* 4. 最下部のBack to home（他ページと完全統一） */
+        /* 【設定：フッター】 常にページ全体の底に静置される、美的な終止符 */
         footer {
             margin-top: 60px;
             text-align: center;
             width: 100%;
         }
 
+        /* 【設定：ホームへ戻るリンク】 
+           等幅フォント「Azeret Mono」を採用。ホバーで静かにフェードアウトし、次の操作へと誘います */
         .back-link {
             display: inline-block;
             font-size: 11px;
             letter-spacing: 0.15em;
-            color: #111111;
+            color: var(--text-primary);
             text-decoration: none;
-            border-bottom: 1px solid #111111;
+            border-bottom: 1px solid var(--text-primary);
             padding-bottom: 4px;
             transition: opacity 0.3s ease;
             text-transform: uppercase;
+            font-family: var(--font-mono);
+            font-weight: 700;
         }
         
         .back-link:hover {
             opacity: 0.5;
         }
         
-        /* モバイル対応：自動的にグリッドをリセットして読みやすい縦スクロールに変更 */
+        /* 【設定：レスポンシブ補正（タブレット等の中解正）】 */
+        @media (max-width: 1024px) {
+            .filters-container {
+                margin-left: 45px;
+                gap: 12px;
+            }
+        }
+
+        /* 【設定：レスポンシブ補正（スマートフォン等の小解像度）】
+           PC特有の非対称なグリッド構造から、破綻のない美的な1カラム構造へと最適化させます */
         @media (max-width: 768px) { 
+            header {
+                flex-direction: column-reverse;
+                align-items: flex-end;
+                gap: 20px;
+                margin-bottom: 40px;
+            }
+            .filters-container {
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-start;
+                overflow-x: auto; /* スマホ画面でフィルターボタン群がはみ出た際にスクロールで辿れるよう補正 */
+                padding-bottom: 8px;
+                scrollbar-width: none; /* スタイリッシュにスクロールバーを非表示（Firefox対応） */
+            }
+            .filters-container::-webkit-scrollbar {
+                display: none; /* スタイリッシュにスクロールバーを非表示（Chrome / Safari対応） */
+            }
             .works-grid { 
                 display: flex;
                 flex-direction: column;
-                gap: 70px;
+                gap: 70px; /* スマートフォンで見やすい均一な縦の間隔に移行 */
             } 
             .work-item {
                 width: 100% !important;
                 margin-top: 0 !important;
                 margin-bottom: 20px !important;
-                transform: none !important;
+                transform: none !important; /* PC用の非対称オフセット（JavaScript側）をキャンセル */
                 border-top: 1px solid #eeeeee;
             }
             .work-label {
@@ -368,12 +519,27 @@
 </head>
 <body>
 
-    <!-- 背景の薄暗いオーバーレイレイヤー -->
+    <!-- 【パーツ：メニュー開閉時のすりガラス暗幕レイヤー】 -->
     <div class="menu-backdrop" id="menu-backdrop"></div>
 
-    <!-- ヘッダー：右上に現在地表示（メニューボタンはfixed化したため、位置調整） -->
+    <!-- 【パーツ：ヘッダー（フィルター群とメニューボタン、現在地）】 -->
     <header>
-        <!-- menu1.png ⇄ menu2.png プレミアム変形メニューボタン（fixedで画面に完全追従） -->
+        <!-- 
+            【パーツ：動的フィルターナビゲーション】
+            `data-filter` 属性の値によって、JavaScriptが該当するカテゴリ以外を美しくフィルタアウトします。
+        -->
+        <div class="filters-container" id="filters-container">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="architecture">Architecture</button>
+            <button class="filter-btn" data-filter="design">Design</button>
+            <button class="filter-btn" data-filter="portfolio">Portfolio</button>
+        </div>
+
+        <!-- 
+            【パーツ：極上レスポンシブ追従メニューボタン】
+            `menu1.png` と `menu2.png` の相互スピン変化。
+            エラー時には自動的に美的に補正された「M1」「M2」のプレースホルダーを描画します。
+        -->
         <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
             <img src="/assets/menu1.png" alt="Open Menu" class="menu-icon icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
             <img src="/assets/menu2.png" alt="Close Menu" class="menu-icon icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
@@ -382,56 +548,48 @@
         <div class="current-page">WORKS</div>
     </header>
 
-    <!-- スライドインするライトグレーサイドバー（MENU-02.pngを完全模写） -->
+    <!-- 
+        【パーツ：スライドイン・サイドバー（MENU-02.pngの完全模写）】
+        すべてのサブページと1pxの狂いもなく揃えられた極細のアンダーライン（30px長）と、
+        画像アセットを最大限に生かすためのプレースホルダー付き画像タグで構成されています。
+    -->
     <aside class="sidebar-menu" id="sidebar-menu">
-        <!-- サイドバー最上部にテトラポットシンボルを美しく配置 -->
         <div class="sidebar-logo">
             <img src="/assets/menu2.png" alt="scaL_TONE Symbol" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=Y';">
         </div>
         <nav class="sidebar-nav">
-            <!-- 
-                【書き換え可能な画像タグ仕様のサイドバーアイコン】
-                ご指定の画像ファイルのパスに変更してください。
-                assetsフォルダ等から各画像ファイルを読み込みます（デフォルトは、トップページの呼び出し構造に合わせて設定しています）。
-                もし画像がまだアップロードされていない場合でも、onerrorによってデザイン崩れを防ぐプレースホルダーが自動的に作動します。
-            -->
-            
-            <!-- HOME (特注：home-linkクラスを追加してアイコンを大きめに調整) -->
+            <!-- HOMEリンク（特注サイズ：22pxアイコン） -->
             <a href="index.html" class="sidebar-item home-link">
                 <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="/assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/ffffff?text=H';" alt="">
                 </div>
                 HOME
             </a>
-            <!-- ABOUT -->
             <a href="about.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="/assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=A';" alt="">
                 </div>
                 ABOUT
             </a>
-            <!-- SHOP -->
             <a href="shop.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="/assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=S';" alt="">
                 </div>
                 SHOP
             </a>
-            <!-- NEWS -->
             <a href="news.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="/assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=N';" alt="">
                 </div>
                 NEWS
             </a>
-            <!-- WORKS (Active) -->
+            <!-- WORKSリンク（現在のアクティブなページ） -->
             <a href="works.html" class="sidebar-item active-link">
                 <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="/assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=W';" alt="">
                 </div>
                 WORKS
             </a>
-            <!-- CONTACT -->
             <a href="contact.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="/assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=C';" alt="">
@@ -441,160 +599,199 @@
         </nav>
     </aside>
 
-    <!-- メイン：作品グリッドエリア -->
+    <!-- 
+        【パーツ：12カラム型 建築・プロダクト WORKS グリッド】
+        各リンク先は project/project1.html などの詳細ページへと適切にマッピングされています。
+        `data-category` 属性により、上部のフィルターと即座に連動します。
+    -->
     <main class="works-grid" id="works-grid">
 
-        <!-- ==========================================
-             ▼ ここから通常プロジェクト（追加用フォーマット）
-             新しい作品を増やしたい場合は、以下のブロックをコピペして増やすだけで
-             配置は完全に自動（非対称＆ズレ）で構築されます。
-             ========================================== -->
-
-        <a href="project/project1.html" class="work-item">
+        <!-- アイテム 01 (Designカテゴリ) -->
+        <a href="project/project1.html" class="work-item" data-category="design">
             <span class="work-label">Project No.01</span>
             <div class="image-box">
-                <img src="/assets/p1.png" alt="">
+                <img src="/assets/p1.png" alt="Concept Study" onerror="this.src='https://placehold.co/800x600/f5f5f5/111111?text=STUDIO+C';">
             </div>
         </a>
 
-        <a href="project/project2.html" class="work-item">
+        <!-- アイテム 02 (Architectureカテゴリ) -->
+        <a href="project/project1.html" class="work-item" data-category="architecture">
             <span class="work-label">Creative Work 02</span>
             <div class="image-box">
-                <img src="/assets/P2.jpg" alt="">
+                <img src="/assets/P2.jpg" alt="Structural Light" onerror="this.src='https://placehold.co/800x1000/f5f5f5/111111?text=MONOLITH+L';">
             </div>
         </a>
 
-        <a href="project/project3.html" class="work-item">
+        <!-- アイテム 03 (Designカテゴリ) -->
+        <a href="project/project1.html" class="work-item" data-category="design">
             <span class="work-label">Design Study 03</span>
             <div class="image-box">
-                <img src="/assets/p3.png" alt="">
+                <img src="/assets/p3.png" alt="Form and Tone" onerror="this.src='https://placehold.co/800x600/f5f5f5/111111?text=SPATIAL+T';">
             </div>
         </a>
 
-        <!-- ここにコピペするだけで作品が自動調整されて増えていきます -->
-
-        <!-- ==========================================
-             ▲ 通常プロジェクトエリア終わり
-             ========================================== -->
-
-
-        <!-- ==========================================
-             ★ 建築学生時代の課題・ポートフォリオ（常に最下部に美しく固定されます）
-             ========================================== -->
-        <a href="/project/portfolio.html" class="work-item portfolio-item">
+        <!-- アイテム 04 (Portfolio特注ブロック：縦長レイアウト) -->
+        <a href="portfolio.html" class="work-item portfolio-item" data-category="portfolio">
             <span class="work-label">Architectural Portfolio</span>
             <div class="image-box">
-                <!-- assets/portfolio/pot01.png から読み込み、見つからない場合はプレースホルダー画像に代替します -->
-                <img src="/assets/portfolio/pot01.png" alt="Student Portfolio" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=pot01.png';">
+                <img src="/assets/portfolio/pot5.png" alt="Student Portfolio Compilation" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=Architectural+Portfolio';">
             </div>
         </a>
 
     </main>
 
-    <!-- フッター：他ページと完全共通 -->
+    <!-- 【パーツ：フッターエリア】 -->
     <footer>
-        <a href="index.html" class="back-link">Back to HOME</a>
+        <a href="index.html" class="back-link">Back to home</a>
     </footer>
 
-    <!-- ランダム自動レイアウト ＆ シーケンシャルフェードインエンジン ＆ メニュー開閉処理 -->
+    <!-- 【設定：JavaScriptエンジン（メニュー制御、ページフェード遷移、非対称レイアウト、動的フィルター）】 -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // 要素の取得
             const trigger = document.getElementById('menu-trigger');
             const menu = document.getElementById('sidebar-menu');
             const backdrop = document.getElementById('menu-backdrop');
             const grid = document.getElementById('works-grid');
-            
-            // 1. メニュー開閉・ページ遷移インタラクション
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const allItems = Array.from(grid.querySelectorAll('.work-item'));
+
+            // ------------------------------------------------------------
+            // 【1. メニュー開閉・トグル処理】
+            // メニュー展開時、グリッドコンテンツを少し右側へスライドさせることで完璧な対比空間を演出。
+            // ------------------------------------------------------------
             function toggleMenu() {
                 const isOpen = menu.classList.toggle('open');
                 trigger.classList.toggle('active');
                 backdrop.classList.toggle('show');
 
-                // メニューが展開されたら作品グリッド全体を右側にシフトさせて対比空間を演出
                 if (isOpen) {
-                    document.body.style.overflow = 'hidden'; // 背景スクロール禁止
+                    document.body.style.overflow = 'hidden'; // 背後の不用意なスクロールを完全に禁止
                     if (window.innerWidth > 768) {
-                        grid.style.transform = 'translateX(60px)';
+                        grid.style.transform = 'translateX(60px)'; // 優雅な右方向へのシフト
                     }
                 } else {
                     document.body.style.overflow = '';
-                    grid.style.transform = 'translateX(0)';
+                    grid.style.transform = 'translateX(0)'; // 元の位置に戻す
                 }
             }
 
-            // クリックイベントの登録
+            // クリック時のバインド
             trigger.addEventListener('click', toggleMenu);
             backdrop.addEventListener('click', toggleMenu);
 
-            // メニュー展開時のリンククリック時にフェードアウトをかける処理
-            const links = document.querySelectorAll('.sidebar-item');
-            links.forEach(link => {
+            // ------------------------------------------------------------
+            // 【2. 完全に同期したページトランジションフェードアウト（600ms）】
+            // サイドバー内のリンクや戻るリンク、作品画像をタップした際、
+            // すぐにジャンプさせず、身体的な余韻を残すためのフェードアウトのあとに遷移します。
+            // ------------------------------------------------------------
+            const menuLinks = document.querySelectorAll('.sidebar-item, .back-link, .work-item');
+            menuLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     const targetUrl = this.getAttribute('href');
-                    if (targetUrl && targetUrl !== '#') {
-                        e.preventDefault();
+                    if (targetUrl && targetUrl !== '#' && !targetUrl.startsWith('javascript:')) {
+                        e.preventDefault(); // 通常の即時移動をキャンセル
                         
-                        // サイドバーを引っ込めて暗幕を解除
+                        // サイドバーを閉じ、暗幕を解除して遷移準備
                         menu.classList.remove('open');
                         trigger.classList.remove('active');
                         backdrop.classList.remove('show');
                         grid.style.transform = 'translateX(0)';
                         
-                        // 優雅なフェードアウトの後に遷移
+                        // project1.htmlと完全に同一の600msのアニメーション遅延の後に安全にジャンプ
+                        document.body.classList.add('page-fade-out');
                         setTimeout(() => {
                             window.location.href = targetUrl;
-                        }, 500); 
+                        }, 600); 
                     }
                 });
             });
 
-            // 2. ランダム自動レイアウト処理
-            // 通常のアイテムをすべて取得（ポートフォリオアイテムは除く）
-            const items = Array.from(grid.querySelectorAll('.work-item:not(.portfolio-item)'));
-            const portfolioItem = grid.querySelector('.portfolio-item');
-
-            // 【画像縮小・段違いグリッド】参考画像の、線の美しさとアシンメトリーが極大化するパターン
+            // ------------------------------------------------------------
+            // 【3. 動的・非対称レイアウトエンジン（Asymmetric Layout Engine）】
+            // 黄金比率を元に、PCビューア時のみグリッドカラムの位置（左右スパン）と
+            // ネガティブマージン（上方向のズレ）を不規則に割り当て、雑誌の美しいエディトリアルを自動構築。
+            // ------------------------------------------------------------
             const layoutPatterns = [
-                { gridColumn: '2 / 7', marginTop: '0px' },       // パターンA: 5カラム（やや左、1カラム空け）
-                { gridColumn: '8 / 12', marginTop: '-60px' },    // パターンB: 4カラム（右寄せ、線と高さが隣と大胆にズレる）
-                { gridColumn: '4 / 10', marginTop: '70px' },     // パターンC: 6カラム（中央、上下に贅沢な空白を発生させる）
-                { gridColumn: '2 / 6', marginTop: '10px' },      // パターンD: 4カラム（小さく上品に）
-                { gridColumn: '7 / 12', marginTop: '-30px' },    // パターンE: 5カラム（右寄り）
-                { gridColumn: '5 / 9', marginTop: '80px' },      // パターンF: 4カラム（完全に中寄せして左右に広大なホワイトスペース）
-                { gridColumn: '3 / 8', marginTop: '20px' },      // パターンG: 5カラム
-                { gridColumn: '9 / 12', marginTop: '-40px' }     // パターンH: 3カラム（右端に極めてコンパクトに配置、余白を増幅）
+                { gridColumn: '2 / 7', marginTop: '0px' },    /* パターンA：左寄せ */
+                { gridColumn: '8 / 12', marginTop: '-60px' },  /* パターンB：右寄せ・上部に食い込み */
+                { gridColumn: '4 / 10', marginTop: '70px' }    /* パターンC：中央・深い間隔 */
             ];
 
-            // パターン配列をランダムにシャッフルするアルゴリズム
-            function shuffle(array) {
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
+            function applyAsymmetricLayout() {
+                // スマートフォン解像度以下の場合は非対称レイアウトを解除し、シンプルな流動1カラムに退避
+                if (window.innerWidth <= 768) {
+                    allItems.forEach(item => {
+                        item.style.gridColumn = '';
+                        item.style.marginTop = '';
+                    });
+                    return;
                 }
-                return array;
+
+                // フィルタによって現在「表示されている」アイテムのみに配列パターンを規則的に再適用
+                const visibleItems = allItems.filter(item => !item.classList.contains('filtered-out'));
+                visibleItems.forEach((item, index) => {
+                    // ポートフォリオPDF枠だけは非対称にせず、中央に大きく表示させてグリッドを安定させます
+                    if (item.classList.contains('portfolio-item')) {
+                        item.style.gridColumn = '3 / 11';
+                        item.style.marginTop = '100px';
+                    } else {
+                        const pattern = layoutPatterns[index % layoutPatterns.length];
+                        item.style.gridColumn = pattern.gridColumn;
+                        item.style.marginTop = pattern.marginTop;
+                    }
+                });
             }
 
-            // ロード毎にパターンの組み合わせをシャッフル
-            const randomizedPatterns = shuffle([...layoutPatterns]);
+            // ------------------------------------------------------------
+            // 【4. カテゴリフィルタリング＆段階的（スタッガー）ロードアニメーション】
+            // 選択されたカテゴリ以外を非表示化し、残ったアイテムに対して
+            // 120ミリ秒のわずかな時間差を設けて下から順にフェードインするスタッガー現象を再現。
+            // ------------------------------------------------------------
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // フィルターボタンのアクティブクラスの付け替え
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
 
-            // 各アイテムにスタイルを適用（パターンの数がアイテムより少なくてもループして繰り返します）
-            items.forEach((item, index) => {
-                const pattern = randomizedPatterns[index % randomizedPatterns.length];
-                
-                // 横幅の広さやズレをインラインスタイルで動的に注入
-                item.style.gridColumn = pattern.gridColumn;
-                item.style.marginTop = pattern.marginTop;
+                    const selectedFilter = this.getAttribute('data-filter');
+
+                    allItems.forEach(item => {
+                        const category = item.getAttribute('data-category');
+                        if (selectedFilter === 'all' || category === selectedFilter) {
+                            item.classList.remove('filtered-out'); // 表示
+                        } else {
+                            item.classList.add('filtered-out'); // 非表示
+                        }
+                    });
+
+                    // レイアウトを再配置し、浮かび上がりアニメーションを再トリガー
+                    applyAsymmetricLayout();
+                    triggerStaggeredFadeIn();
+                });
             });
 
-            // すべてのアイテム（ポートフォリオを含む）を順番に滑らかにフェードイン
-            const allItems = [...items, portfolioItem];
-            allItems.forEach((item, index) => {
-                if (item) {
+            // 【5. 段階的フェードイン機能のトリガー】
+            function triggerStaggeredFadeIn() {
+                const visibleItems = allItems.filter(item => !item.classList.contains('filtered-out'));
+                visibleItems.forEach(item => item.classList.remove('visible')); // 一旦リセット
+                
+                // 表示対象に対して120ミリ秒づつ遅延させて「visible」を付与
+                visibleItems.forEach((item, index) => {
                     setTimeout(() => {
                         item.classList.add('visible');
-                    }, index * 180); // 180msで小気味よくウェーブするように展開
-                }
-            });
+                    }, index * 120);
+                });
+            }
+
+            // ------------------------------------------------------------
+            // 【6. 初期化およびウィンドウ幅監視】
+            // ロード時の初期配置の確定と、リサイズ発生時のグリッド再描画をバインド。
+            // ------------------------------------------------------------
+            applyAsymmetricLayout();
+            triggerStaggeredFadeIn();
+
+            window.addEventListener('resize', applyAsymmetricLayout);
         });
     </script>
 </body>
