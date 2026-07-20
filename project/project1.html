@@ -3,301 +3,516 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROJECT | scaL_TONE</title>
+    <title>PROJECT NO.01 | scaL_TONE</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Azeret+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            /* ギャラリーや他ページと統一した極上のウォームクリーム色 */
+            --bg-color: #fbfaf6; 
+            --text-primary: #111111;
+            --text-secondary: #555555;
+            --border-color: #111111;
+            --font-sans: 'Arimo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: 'Azeret Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         
+        /* ページ全体の設定とフェードアウト時のトランジション */
         body { 
-            background-color: #ffffff; 
-            color: #111111; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-primary); 
+            font-family: var(--font-sans); 
             padding: 40px 20px 100px; 
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            overflow-x: hidden;
+            position: relative;
             opacity: 1;
-            transition: opacity 0.5s ease, transform 0.5s ease; /* ページ遷移時のフェードアウト用 */
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
-        /* ページ全体がフェードアウトするときのクラス */
+        /* ページ移動時に付与されるフェードアウト用クラス */
         body.page-fade-out {
             opacity: 0 !important;
             transform: translateY(-8px);
         }
+
+        /* 左上に固定されるメニューボタン */
+        .menu-trigger {
+            position: fixed;
+            top: 40px;
+            left: max(20px, calc(50% - 600px));
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100; /* サイドバーより手前に配置 */
+        }
+
+        .menu-trigger img {
+            position: absolute;
+            width: 26px;
+            height: auto;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* メニューボタンの回転・切り替えアニメーション */
+        .menu-trigger .icon-default { opacity: 1; transform: rotate(0deg) scale(1); }
+        .menu-trigger .icon-active { opacity: 0; transform: rotate(-180deg) scale(0.7); }
+        .menu-trigger.active .icon-default { opacity: 0; transform: rotate(180deg) scale(0.7); }
+        .menu-trigger.active .icon-active { opacity: 1; transform: rotate(0deg) scale(1); }
+
+        /* 左からスライドインするサイドバーメニュー */
+        .sidebar-menu {
+            position: fixed; top: 0; left: -260px; width: 240px; height: 100vh;
+            background-color: #eaeaea; z-index: 1000; padding: 120px 30px 40px;
+            transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            display: flex; flex-direction: column; gap: 24px;
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
+        }
+        .sidebar-menu.open { left: 0; }
+
+        .sidebar-logo { margin-bottom: 12px; display: flex; justify-content: flex-start; }
+        .sidebar-logo img { width: 32px; height: auto; object-fit: contain; }
         
-        /* 1. 右上のページ表示（他ページと完全統一） */
+        .sidebar-nav { display: flex; flex-direction: column; gap: 20px; }
+        .sidebar-item {
+            display: flex; align-items: center; gap: 12px; text-decoration: none;
+            color: #111111; font-size: 11px; font-weight: 700; letter-spacing: 0.15em;
+            text-transform: uppercase; padding: 6px 0; position: relative;
+        }
+        
+        /* サイドバーアイコンのラッパーとホバー時のアンダーライン設定 */
+        .sidebar-icon-wrapper { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .sidebar-icon { max-width: 16px; max-height: 16px; width: 100%; height: auto; object-fit: contain; opacity: 0.9; }
+        .sidebar-item::after {
+            content: ''; position: absolute; left: 36px; bottom: 0; width: 30px; height: 1px;
+            background-color: #111111; opacity: 0; transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .sidebar-item:hover::after, .sidebar-item.active-link::after { opacity: 1; }
+
+        /* メニューを開いたときの背景暗幕（すりガラス効果付き） */
+        .menu-backdrop {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(255, 255, 255, 0.6); backdrop-filter: blur(2px);
+            z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
+        }
+        .menu-backdrop.show { opacity: 1; pointer-events: auto; }
+
+        /* 右上に配置されるページインジケーター */
         header { 
-            max-width: 1200px; 
-            margin: 0 auto 40px; 
-            display: flex; 
-            justify-content: flex-end; 
-            width: 100%;
+            max-width: 1200px; margin: 0 auto 40px; display: flex; 
+            justify-content: flex-end; width: 100%; z-index: 100;
         }
         
         .current-page { 
-            font-size: 10px; 
-            letter-spacing: 0.2em; 
-            font-weight: 700; 
-            border-bottom: 1px solid #111111; 
-            padding-bottom: 4px; 
-            text-transform: uppercase;
+            font-size: 10px; letter-spacing: 0.2em; font-weight: 700; 
+            border-bottom: 1px solid var(--border-color); padding-bottom: 4px; 
+            text-transform: uppercase; font-family: var(--font-mono);
         }
 
-        /* 2. メインビジュアル（アートブックの1ページのような圧倒的な余白と緊張感） */
-        .hero-container {
-            max-width: 1000px;
+        /* 参考画像に基づく12カラムのアシンメトリーなグリッド構成 */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 40px;
+            max-width: 1000px; /* 画面に若干の余白を生むため縮小 */
             width: 100%;
-            margin: 0 auto 80px;
-            opacity: 0;
-            transform: translateY(15px);
-            animation: fadeInHero 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            margin: 20px auto 100px;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            align-items: start;
         }
 
-        .hero-image-box {
-            width: 100%;
-            max-height: 500px;
-            overflow: hidden;
+        /* 左側：2枚の画像を並べるエリア（左下に配置） */
+        .col-visuals { 
+            grid-column: 1 / 8; /* 画像エリアを広めに確保 */
             display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #fafafa;
-        }
-
-        .hero-image-box img {
-            width: 100%;
-            height: auto;
-            display: block;
-            filter: grayscale(100%);
-            transition: filter 0.8s ease, transform 0.8s ease;
-        }
-
-        .hero-image-box:hover img {
-            filter: grayscale(0%);
-            transform: scale(1.02);
+            gap: 20px;
+            align-items: flex-end;
+            margin-top: 160px; /* 大胆に下へ移動させて左下を演出 */
         }
         
-        /* 3. 3カラム構成の解説・仕様セクション */
-        .project-detail-container { 
-            display: grid; 
-            grid-template-columns: repeat(12, 1fr); 
-            gap: 20px; 
-            max-width: 1000px; 
-            margin: 0 auto; 
-            padding: 45px 0; 
-            border-top: 1px solid #111111; 
-            width: 100%;
+        .visual-image-box { 
+            flex: 1;
+            background: #f9f9f9; 
+            aspect-ratio: 3 / 4; 
+            overflow: hidden;
+            cursor: zoom-in;
+            position: relative;
             opacity: 0;
-            transform: translateY(15px);
-            animation: fadeInContent 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.3s forwards;
+            transform: translateY(20px);
+            animation: fadeUp 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        /* 2枚目の画像は少し遅れてフェードインさせる */
+        .visual-image-box:nth-child(2) {
+            animation-delay: 0.2s;
         }
         
-        /* 左カラム：セクションラベル */
-        .project-label { 
-            grid-column: 1 / 3; 
-            font-size: 10px; 
-            letter-spacing: 0.15em; 
-            color: #888888; 
-            text-transform: uppercase; 
-            font-weight: 500;
+        .visual-image-box img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover;
+            filter: grayscale(100%); 
+            transition: filter 0.6s ease, transform 0.6s ease;
         }
-        
-        /* 中央カラム：プロジェクトのメイン解説文章 */
-        .project-main-text { 
-            grid-column: 3 / 8; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 24px; 
+
+        /* 画像ホバー時にカラーに戻し、わずかに拡大する */
+        .visual-image-box:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.03);
         }
-        
+
+        /* 右側：解説テキストとスペック表を並べるエリア（右上に配置） */
+        .col-details {
+            grid-column: 9 / 13; /* 右側にコンパクトに寄せる */
+            display: flex;
+            flex-direction: column; /* 縦並びに変更 */
+            gap: 40px;
+            border-top: 1px solid var(--border-color); /* 上部の美しい境界線 */
+            padding-top: 20px;
+            align-self: start;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s cubic-bezier(0.25, 1, 0.5, 1) 0.4s forwards;
+        }
+
+        /* 解説テキストのスタイリング */
+        .narrative-col {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
         .project-title {
-            font-size: 16px;
+            font-size: 12px; /* 少し小さく */
             font-weight: 700;
             letter-spacing: 0.1em;
-            color: #111111;
+            color: var(--text-primary);
         }
 
         .project-desc {
-            font-size: 14px;
-            line-height: 2.0;
+            font-size: 11px; /* 少し小さく */
+            line-height: 2.2;
             letter-spacing: 0.05em;
-            color: #333333;
+            color: var(--text-secondary);
+            text-align: justify;
         }
 
-        /* 右カラム：工学・技術スペックテーブル */
-        .project-spec-area {
-            grid-column: 8 / 13;
-            font-family: 'Courier New', Courier, monospace; 
-            font-size: 11px;
-            color: #555555;
+        /* スペック表（技術仕様）のスタイリング */
+        .specs-col {
+            font-family: var(--font-mono);
+            font-size: 9px; /* 少し小さく */
+            color: #777777;
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
         .spec-item {
-            border-bottom: 1px solid #eeeeee;
-            padding-bottom: 8px;
             display: flex;
             justify-content: space-between;
+            border-bottom: 1px solid #eeeeee;
+            padding-bottom: 6px;
         }
 
-        .spec-label {
-            font-weight: bold;
-            color: #111111;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .spec-item span:first-child {
+            font-weight: 700;
+            color: var(--text-primary);
         }
 
-        .spec-val {
-            text-align: right;
-            letter-spacing: 0.02em;
+        /* エレガントなすりガラス（ブラー）効果を持つライトボックスの背景 */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(251, 250, 246, 0.75); /* 背景のウォームクリーム色と調和させる */
+            backdrop-filter: blur(15px); /* 高品質なぼかし効果 */
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            cursor: zoom-out;
+        }
+
+        .lightbox-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 拡大表示される画像自体のスタイル */
+        .lightbox-img {
+            max-width: 85vw;
+            max-height: 85vh;
+            object-fit: contain;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            transform: scale(0.95);
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .lightbox-overlay.active .lightbox-img {
+            transform: scale(1);
+        }
+
+        /* フッター：戻るボタンの配置 */
+        footer { 
+            margin-top: auto; 
+            text-align: center; 
+            width: 100%; 
+            padding: 80px 0 20px; 
         }
         
-        /* 4. 最下部のBack to home / Works */
-        footer {
-            margin-top: 100px;
-            text-align: center;
-            width: 100%;
-        }
-
-        .back-link {
-            display: inline-block;
-            font-size: 11px;
-            letter-spacing: 0.15em;
-            color: #111111;
-            text-decoration: none;
-            border-bottom: 1px solid #111111;
-            padding-bottom: 4px;
+        .back-link { 
+            font-size: 10px; 
+            letter-spacing: 0.2em; 
+            color: var(--text-primary); 
+            text-decoration: none; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 4px; 
+            text-transform: uppercase; 
+            font-weight: 700;
             transition: opacity 0.3s ease;
-            text-transform: uppercase;
-            position: relative; /* 擬似要素の位置決めのための基準点 */
+            position: relative;
         }
         
-        /* 【極上UX設計】見た目のフォントバランスを維持したまま、指やマウスが反応するタップ可能領域だけを広げます */
+        /* タップ・クリックしやすいように透明な領域を広げる配慮 */
         .back-link::before {
-            content: '';
-            position: absolute;
-            top: -15px;
-            bottom: -15px;
-            left: -25px;
-            right: -25px;
+            content: ''; position: absolute; top: -15px; bottom: -15px; left: -25px; right: -25px;
         }
-        
-        .back-link:hover {
-            opacity: 0.5;
-        }
-        
-        /* フェードインアニメーション */
-        @keyframes fadeInHero {
-            from { opacity: 0; transform: translateY(15px); }
+        .back-link:hover { opacity: 0.5; }
+
+        /* 読み込み時のフェードアップアニメーション */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes fadeInContent {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* レスポンシブ対応（スマホ・タブレット画面用） */
+        @media (max-width: 1024px) {
+            .project-grid { display: flex; flex-direction: column; gap: 60px; margin-top: 40px; }
+            .col-visuals { margin-top: 0; } /* モバイル時はマージンをリセット */
+            .col-details { display: flex; flex-direction: column; }
         }
-
-        /* モバイル対応（1カラムに綺麗に再構築） */
-        @media (max-width: 768px) { 
-            .project-detail-container { 
-                display: flex; 
-                flex-direction: column; 
-                gap: 40px;
-            } 
-            .project-label {
-                margin-bottom: -10px;
-            }
-            .project-spec-area {
-                margin-top: 20px;
-                border-top: 1px dashed #eeeeee;
-                padding-top: 20px;
-            }
+        @media (max-width: 600px) {
+            .col-visuals { flex-direction: column; }
+            .visual-image-box { aspect-ratio: auto; height: 400px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ヘッダー：右上の現在地表示 -->
+    <!-- メニュー展開時の背景暗幕（オーバーレイ） -->
+    <div class="menu-backdrop" id="menu-backdrop"></div>
+
+    <!-- 左上固定のメニューボタン（ハンバーガー/閉じる） -->
+    <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
+        <img src="../assets/menu1.png" alt="メニューを開く" class="icon-default" onerror="this.src='https://placehold.co/32x32/111111/fbfaf6?text=M1';">
+        <img src="../assets/menu2.png" alt="メニューを閉じる" class="icon-active" onerror="this.src='https://placehold.co/32x32/111111/fbfaf6?text=M2';">
+    </button>
+
+    <!-- スライドインするサイドバーメニュー -->
+    <aside class="sidebar-menu" id="sidebar-menu">
+        <div class="sidebar-logo">
+            <img src="../assets/menu2.png" alt="scaL_TONE ロゴ" onerror="this.src='https://placehold.co/32x32/111111/fbfaf6?text=Y';">
+        </div>
+        <nav class="sidebar-nav">
+            <a href="../index.html" class="sidebar-item">
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="../assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/fbfaf6?text=H';"></div>
+                HOME
+            </a>
+            <a href="../about.html" class="sidebar-item">
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="../assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=A';"></div>
+                ABOUT
+            </a>
+            <a href="../shop.html" class="sidebar-item">
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="../assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=S';"></div>
+                SHOP
+            </a>
+            <a href="../news.html" class="sidebar-item">
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="../assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=N';"></div>
+                NEWS
+            </a>
+            <a href="../works.html" class="sidebar-item active-link">
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="../assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=W';"></div>
+                WORKS
+            </a>
+            <a href="../contact.html" class="sidebar-item">
+                <div class="sidebar-icon-wrapper"><img class="sidebar-icon" src="../assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=C';"></div>
+                CONTACT
+            </a>
+        </nav>
+    </aside>
+
+    <!-- ヘッダー：現在のページを示すインジケーター -->
     <header>
         <div class="current-page">PROJECT</div>
     </header>
 
-    <!-- メインビジュアルエリア -->
-    <div class="hero-container">
-        <div class="hero-image-box">
-            <img src="/assets/p1.png" alt="Project Main Visual" onerror="this.src='/assets/logo2.png'">
-        </div>
-    </div>
+    <main class="project-grid" id="main-grid">
+        
+        <!-- 左側エリア：ダブル画像ギャラリー -->
+        <section class="col-visuals">
+            <div class="visual-image-box" data-zoom>
+                <img src="../assets/project1/P1_2.jpg" alt="アパレルの正面ビュー" onerror="this.src='https://placehold.co/600x800/f5f5f5/111111?text=T-Shirt+Front';">
+            </div>
+            <div class="visual-image-box" data-zoom>
+                <img src="../assets/project1/P1_1.jpg" alt="ロゴの詳細ビュー" onerror="this.src='https://placehold.co/600x800/f5f5f5/111111?text=Logo+Detail';">
+            </div>
+        </section>
 
-    <!-- メインコンテンツ：3カラム構造 -->
-    <main>
-        <div class="project-detail-container">
-            <!-- 左カラム -->
-            <div class="project-label">Project.01</div>
+        <!-- 右側エリア：解説文とスペック表の分割レイアウト -->
+        <section class="col-details">
             
-            <!-- 中央カラム -->
-            <div class="project-main-text">
-                <h2 class="project-title">
-                    Project No.01 / Design Conception
-                </h2>
+            <!-- 解説テキストカラム -->
+            <article class="narrative-col">
+                <h2 class="project-title">Project No.01 / Design Conception</h2>
                 <p class="project-desc">
-                    ここにプロジェクトの紹介や、デザインのコンセプチュアルな解説テキストを記述します。
-                    余白を贅沢に活かした静かな構成が、クリエイションの深度を伝えます。<br><br>
+                    ここにプロジェクトの紹介や、デザインのコンセプチュアルな解説テキストを記述します。余白を贅沢に活かした静かな構成が、クリエイションの深度を伝えます。<br><br>
                     素材の質感が語りかける言葉と、緻密に計算された極小の尺度が交差するとき、そこには新しい調和の空間が生まれます。scaL_TONEが追求する、機能的ミニマリズムの極致をここから発信します。
                 </p>
-            </div>
+            </article>
 
-            <!-- 右カラムスペックテーブル -->
-            <div class="project-spec-area">
+            <!-- 技術仕様（スペック）カラム -->
+            <aside class="specs-col">
                 <div class="spec-item">
-                    <span class="spec-label">PROJECT NAME</span>
-                    <span class="spec-val">scaL_TONE Studio</span>
+                    <span>PROJECT NAME</span>
+                    <span>scaL_TONE Studio</span>
                 </div>
                 <div class="spec-item">
-                    <span class="spec-label">YEAR</span>
-                    <span class="spec-val">2026</span>
+                    <span>YEAR</span>
+                    <span>2026</span>
                 </div>
                 <div class="spec-item">
-                    <span class="spec-label">CATEGORY</span>
-                    <span class="spec-val">ARCHITECTURE / FURNITURE</span>
+                    <span>CATEGORY</span>
+                    <span>ARCHITECTURE / FURNITURE</span>
                 </div>
                 <div class="spec-item">
-                    <span class="spec-label">MATERIALS</span>
-                    <span class="spec-val">STEEL, CONCRETE, LIGHT</span>
+                    <span>MATERIALS</span>
+                    <span>STEEL, CONCRETE, LIGHT</span>
                 </div>
                 <div class="spec-item">
-                    <span class="spec-label">SCALE</span>
-                    <span class="spec-val">1:50 / 78MM x 35MM</span>
+                    <span>SCALE</span>
+                    <span>1:50 / 78MM x 35MM</span>
                 </div>
-            </div>
-        </div>
+            </aside>
+            
+        </section>
     </main>
 
-    <!-- フッター：確実にルート（main）に戻れるように `../works.html` の相対パスへ補正 -->
+    <!-- 画像拡大用のライトボックス -->
+    <div class="lightbox-overlay" id="lightbox">
+        <img src="" alt="拡大画像" class="lightbox-img" id="lightbox-img">
+    </div>
+
+    <!-- フッター：戻るリンク -->
     <footer>
-        <a href="../works.html" class="back-link">Back to works</a>
+        <a href="../works.html" class="back-link">Back to Works</a>
     </footer>
 
-    <!-- スムーズな遷移を可能にするJavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const trigger = document.getElementById('menu-trigger');
+            const menu = document.getElementById('sidebar-menu');
+            const backdrop = document.getElementById('menu-backdrop');
+            const mainGrid = document.getElementById('main-grid');
             const backLink = document.querySelector('.back-link');
+
+            // 1. メニューの開閉インタラクション
+            function toggleMenu() {
+                const isOpen = menu.classList.toggle('open');
+                trigger.classList.toggle('active');
+                backdrop.classList.toggle('show');
+
+                if (isOpen) {
+                    document.body.style.overflow = 'hidden';
+                    if (window.innerWidth > 1024) {
+                        mainGrid.style.transform = 'translateX(60px)';
+                    }
+                } else {
+                    document.body.style.overflow = '';
+                    mainGrid.style.transform = 'translateX(0)';
+                }
+            }
+
+            trigger.addEventListener('click', toggleMenu);
+            backdrop.addEventListener('click', toggleMenu);
+
+            // 2. サイドバーリンクのクリック処理（滑らかな画面遷移）
+            const menuLinks = document.querySelectorAll('.sidebar-item');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const targetUrl = this.getAttribute('href');
+                    if (targetUrl && targetUrl !== '#') {
+                        e.preventDefault();
+                        menu.classList.remove('open');
+                        trigger.classList.remove('active');
+                        backdrop.classList.remove('show');
+                        mainGrid.style.transform = 'translateX(0)';
+                        document.body.classList.add('page-fade-out');
+                        setTimeout(() => { window.location.href = targetUrl; }, 600);
+                    }
+                });
+            });
+
+            // 3. エレガントなライトボックス機能の実装
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const zoomImages = document.querySelectorAll('.visual-image-box[data-zoom]');
+
+            zoomImages.forEach(box => {
+                box.addEventListener('click', () => {
+                    const img = box.querySelector('img');
+                    if (img) {
+                        lightboxImg.src = img.src;
+                        lightboxImg.alt = img.alt;
+                        lightbox.classList.add('active');
+                        document.body.style.overflow = 'hidden'; // 背景のスクロールを無効化
+                    }
+                });
+            });
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+                // フェードアウトが完了するのを待ってから画像ソースをクリア
+                setTimeout(() => { lightboxImg.src = ''; }, 500);
+            }
+
+            lightbox.addEventListener('click', closeLightbox);
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                    closeLightbox();
+                }
+            });
+
+            // 4. フッターの戻るリンク（滑らかな画面遷移）
             if (backLink) {
                 backLink.addEventListener('click', function(e) {
-                    // 通常のブラウザの即時ジャンプをキャンセル
                     e.preventDefault();
-                    
                     const targetUrl = this.getAttribute('href');
-                    
-                    // ページ全体を優雅にフェードアウト
                     document.body.classList.add('page-fade-out');
-                    
-                    // アニメーション時間（0.5秒）を待ってから、確実にリンク先へジャンプ
-                    setTimeout(() => {
-                        window.location.href = targetUrl;
-                    }, 500);
+                    setTimeout(() => { window.location.href = targetUrl; }, 600);
                 });
             }
         });
