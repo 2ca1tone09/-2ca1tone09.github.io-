@@ -20,11 +20,9 @@
             --text-primary: #111111;         /* 主要文字：コントラストの強いディープブラック */
             --text-secondary: #555555;       /* 補助文字：可読性の高いミディアムグレー */
             --text-muted: #888888;           /* 控えめな文字：補足やメタデータ用のライトグレー */
-            --accent-color: #eaeaea;         /* アクセント色：サイドバー背景などに使用するマットライトグレー */
             --border-color: #111111;         /* 境界線：強弱を明確にするためのシャープな黒線 */
             --font-sans: 'Arimo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; /* サンセリフフォント */
             --font-mono: 'Azeret Mono', monospace; /* 等幅フォント */
-            --transition-smooth: 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* 贅沢で吸い付くようなイージング（0.6秒） */
         }
 
         /* 【設定：グローバルリセット】
@@ -36,7 +34,7 @@
         }
         
         /* 【設定：全体ボディ（BODY）】
-           ページ全体のベースラインを設定。フッターを最下部に押し出すためflexレイアウトを適用 */
+           project1と完璧に揃えた、600msの滑らかなフェードインアニメーション用初期設定 */
         body { 
             background-color: var(--bg-color); 
             color: var(--text-primary); 
@@ -47,22 +45,21 @@
             flex-direction: column;
             overflow-x: hidden;
             position: relative;
-            /* 起動時およびページロード時の透明度と位置の初期設定（0.6秒かけて滑らかにフェードイン） */
             opacity: 1;
-            transform: translateY(0);
+            /* ページ起動時の透明度と位置の初期トランジション設定（project1準拠 0.6s） */
             transition: opacity 0.6s ease, transform 0.6s ease;
         }
         
         /* 【設定：ページフェードアウトクラス】
-           リンククリック時にこのクラスがボディに付与され、project1同様に美しく消えていく遷移を実現します */
+           project1同様、リンククリック時にこのクラスがボディに付与され、美しく消えていく遷移（0.6s）を実現します */
         body.page-fade-out {
             opacity: 0 !important;
             transform: translateY(-8px);
         }
-        
-        /* 【設定：極上レスポンシブ固定（追従）メニューボタン】
-           スクロールしても左上に追従。
-           画面最大幅1200pxの左端にピタリとシンクロし、スマホ等では端から20pxの美しい位置をキープ。 */
+
+        /* */
+        /* 【標準仕様：極上レスポンシブ固定メニューボタン（project1と完全に同一）】
+           スクロールしても左上に追従。画面最大幅1200pxの左端、またはスマホ端から20pxの位置。 */
         .menu-trigger {
             position: fixed;
             top: 40px;
@@ -75,70 +72,68 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1100; /* スライドインするサイドバーよりも常に手前に表示させて操作性を担保 */
+            z-index: 1100; /* スライドサイドバーより手前に表示 */
             outline: none;
-            -webkit-tap-highlight-color: transparent; /* モバイル端末でのタップ時ハイライト青枠を消去 */
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* 【設定：メニューボタン内の画像パーツ制御】
-           三本線バー（menu1.png）とテトラポット（menu2.png）の2つの画像を重ねて配置 */
+        /* 【標準仕様：メニュー画像パーツ制御（project1と完全に同一）】 */
         .menu-trigger img {
             position: absolute;
             width: 26px;
             height: auto;
             object-fit: contain;
-            transition: transform var(--transition-smooth), opacity var(--transition-smooth);
+            /* 0.6s イージング transition: project1の極上スピン指定を完全コピー */
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 【設定：初期状態（通常時）】
-           menu1.png（三本線）が完全表示され、menu2.png（テトラポット）は反時計回りに回転して隠れた状態 */
-        .menu-trigger .icon-default {
-            opacity: 1;
-            transform: rotate(0deg) scale(1);
+        /* 【標準仕様：メニューボタン通常時（project1と完全に同一）】 */
+        .menu-trigger .icon-default { 
+            opacity: 1; 
+            transform: rotate(0deg) scale(1); 
+        }
+        
+        .menu-trigger .icon-active { 
+            opacity: 0; 
+            transform: rotate(-180deg) scale(0.7); 
         }
 
-        .menu-trigger .icon-active {
-            opacity: 0;
-            transform: rotate(-180deg) scale(0.7);
+        /* 【標準仕様：メニューボタン展開アクティブ時（project1と完全に同一）】 */
+        .menu-trigger.active .icon-default { 
+            opacity: 0; 
+            transform: rotate(180deg) scale(0.7); 
+        }
+        
+        .menu-trigger.active .icon-active { 
+            opacity: 1; 
+            transform: rotate(0deg) scale(1); 
         }
 
-        /* 【設定：アクティブ（サイドバー展開時）状態】
-           menu1.pngが時計回りにスピンしながら消去され、入れ替わりでテトラポット（menu2.png）がスピン登場 */
-        .menu-trigger.active .icon-default {
-            opacity: 0;
-            transform: rotate(180deg) scale(0.7);
-        }
-
-        .menu-trigger.active .icon-active {
-            opacity: 1;
-            transform: rotate(0deg) scale(1);
-        }
-
-        /* 【設定：15〜20%の割合を占めるスライドイン・サイドバー（MENU-02.pngの完全再現）】
-           初期状態は画面の左外側（-260px）に隠蔽され、クラス付与で滑らかに出現 */
+        /* */
+        /* 【標準仕様：15〜20%を占めるスライドインサイドバー（project1と完全に同一）】
+           初期状態は画面外の左側（-260px）に隠蔽。マットなライトグレー（#eaeaea）。 */
         .sidebar-menu {
-            position: fixed;
-            top: 0;
+            position: fixed; 
+            top: 0; 
             left: -260px; 
-            width: 240px;
+            width: 240px; 
             height: 100vh;
-            background-color: var(--accent-color); /* カンプ通りのマットなライトグレー */
-            z-index: 1000;
-            padding: 120px 30px 40px; /* 上部にテトラポットボタンの余白を贅沢に確保 */
-            display: flex;
-            flex-direction: column;
-            gap: 28px;
-            transition: left var(--transition-smooth);
-            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02); /* 境界を感じさせない極小のソフトな陰影 */
+            background-color: #eaeaea; 
+            z-index: 1000; 
+            padding: 120px 30px 40px; /* テトラポットボタン用の余白 */
+            /* 0.6s イージング transition: project1と完全同期 */
+            transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            display: flex; 
+            flex-direction: column; 
+            gap: 24px; /* project1基準のスリム隙間 */
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
+        }
+        
+        .sidebar-menu.open { 
+            left: 0; 
         }
 
-        /* 【設定：サイドバー開閉のトグル状態】 */
-        .sidebar-menu.open {
-            left: 0; /* 滑らかに画面内にスライドイン */
-        }
-
-        /* 【設定：サイドバー最上部のブランドマーク】
-           menu2.png（テトラポットシンボル）を左寄せで美しく静置 */
+        /* 【標準仕様：サイドバー最上部のテトラポットロゴ（MENU-02.png再現）】 */
         .sidebar-logo {
             margin-bottom: 12px;
             display: flex;
@@ -150,106 +145,98 @@
             height: auto;
             object-fit: contain;
         }
-
-        /* 【設定：サイドバー内のリンク構造】 */
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 22px;
+        
+        /* 【標準仕様：サイドバーリンク構造（project1と完全に同一）】 */
+        .sidebar-nav { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; /* project1基準の空間律動 */
         }
-
+        
         .sidebar-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
             text-decoration: none;
-            color: var(--text-primary);
-            font-size: 11px;
-            font-weight: 700;
+            color: #111111; 
+            font-size: 11px; 
+            font-weight: 700; 
             letter-spacing: 0.15em;
-            text-transform: uppercase;
-            padding: 6px 0;
+            text-transform: uppercase; 
+            padding: 6px 0; 
             position: relative;
         }
-
-        /* 【設定：サイドバーアイコンを包むラッパーコンテナ】
-           アイコンサイズに左右されず、文字の開始位置を完璧に「縦一列」に揃えるための24px固定領域 */
-        .sidebar-icon-wrapper {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+        
+        /* 【標準仕様：サイドバーアイコン配置ラッパー（project1と完全に同一）】 */
+        .sidebar-icon-wrapper { 
+            width: 24px; 
+            height: 24px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-shrink: 0; 
+        }
+        
+        /* 【標準仕様：サイドバーアイコン本体（project1と完全に同一）】 */
+        .sidebar-icon { 
+            max-width: 16px; 
+            max-height: 16px; 
+            width: 100%; 
+            height: auto; 
+            object-fit: contain; 
+            opacity: 0.9; 
+        }
+        
+        /* 【標準仕様：サイドバーHOMEアイコン特注拡張（project1と完全に同一）】 */
+        .sidebar-item.home-link .sidebar-icon { 
+            max-width: 22px; 
+            max-height: 22px; 
         }
 
-        /* 【設定：各サイドバーアイコン（画像読み込み）の基本サイズ】 */
-        .sidebar-icon {
-            max-width: 16px;
-            max-height: 16px;
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-            opacity: 0.9;
-            transition: transform 0.4s ease;
-        }
-
-        /* 【設定：ホバーインタラクション】 ホバーしたアイコンがわずかに膨らみ、鼓動のような有機性を演出 */
-        .sidebar-item:hover .sidebar-icon {
-            transform: scale(1.1);
-        }
-
-        /* 【設定：特注HOMEアイコン補正】 
-           お預かりしている画像アセットのバランスを活かし、HOMEのみアイコンラッパー内の最大サイズを22pxに拡張 */
-        .sidebar-item.home-link .sidebar-icon {
-            max-width: 22px;
-            max-height: 22px;
-        }
-
-        /* 【設定：完全に統一された長さと太さのアンダーバー】
-           すべてのメニュー、すべての状態（通常時・ホバー時・アクティブ時）において、
-           線の長さ（30px）と太さ（1px）をミリ単位で完全に均一に統一。ミニマルなグリッドの規律を強調 */
+        /* */
+        /* 【標準仕様：完全に統一された長さと太さのアンダーバー（project1と完全に同一）】
+           線の長さ（30px）、太さ（1px）、左位置（36px）を厳密に統一。 */
         .sidebar-item::after {
-            content: '';
-            position: absolute;
-            left: 36px; /* wrapper(24px) + margin(12px) の位置に完璧に固定 */
-            bottom: 0;
-            width: 30px; /* 完全に統一された固定長 */
-            height: 1px; /* 完全に統一された極細ライン */
-            background-color: var(--text-primary);
-            opacity: 0; /* 通常時は静寂を保つために非表示 */
+            content: ''; 
+            position: absolute; 
+            left: 36px; 
+            bottom: 0; 
+            width: 30px; 
+            height: 1px;
+            background-color: #111111; 
+            opacity: 0; 
+            /* 0.3s イージング transition: project1と完全一致 */
             transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
-
-        /* ホバー時に同じ長さ・太さのまま美しくフェードイン */
+        
         .sidebar-item:hover::after, 
-        .sidebar-item.active-link::after {
-            opacity: 1;
+        .sidebar-item.active-link::after { 
+            opacity: 1; 
         }
 
-        /* 【設定：メニュー背景のソフトな暗幕】
-           サイドバーが開いた際、メインコンテンツの背後に広がる白ベースのシースルーレイヤー。
-           背後のコンテンツを薄く残しつつフォーカスをメニューに集中させます */
+        /* 【標準仕様：メニュー背景のソフトなすりガラス暗幕（project1と完全に同一）】 */
         .menu-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
             height: 100vh;
-            background-color: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(2px); /* 現代的なすりガラス効果 */
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity var(--transition-smooth);
+            background-color: rgba(255, 255, 255, 0.6); 
+            backdrop-filter: blur(2px);
+            z-index: 999; 
+            opacity: 0; 
+            pointer-events: none; 
+            /* 0.6s トランジション: project1と完全一致 */
+            transition: opacity 0.6s ease;
+        }
+        
+        .menu-backdrop.show { 
+            opacity: 1; 
+            pointer-events: auto; 
         }
 
-        .menu-backdrop.show {
-            opacity: 1;
-            pointer-events: auto; /* 暗幕エリアをタップしてメニューを閉じることを可能にします */
-        }
-
-        /* 【設定：ヘッダー】 右上に現在地を表示し、左上のメニューと完璧な左右対比を構成 */
+        /* */
+        /* 【設定：ヘッダー】 右上に現在地を表示し、左上の追従メニューと完璧な左右対比を構成 */
         header { 
             max-width: 1200px; 
             margin: 0 auto 60px; 
@@ -303,6 +290,7 @@
             font-family: var(--font-mono);
         }
 
+        /* */
         /* 【設定：WORKSグリッド構造】
            12カラムのグリッド。JavaScriptの「非対称レイアウトエンジン」により、各アイテムが動的に不規則に配置されます */
         .works-grid { 
@@ -313,7 +301,8 @@
             margin: 0 auto; 
             padding: 20px 0; 
             width: 100%;
-            transition: transform var(--transition-smooth); /* メニュー展開時にコンテンツ全体がエレガントに右へシフト */
+            /* メニュー展開時のグリッドシフト用トランジション（0.6sイージング：project1準拠） */
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
         
         /* 【設定：個別作品枠】
@@ -340,7 +329,7 @@
         }
 
         /* 【設定：フィルターアウト状態】
-           非表示になったコンテンツが空間を崩さないよう、滑らかに縮小消去され、物理的な幅・高さをゼロにします */
+           非表示になったコンテンツが空間を崩さないよう、物理的な幅・高さをゼロにします */
         .work-item.filtered-out {
             opacity: 0 !important;
             transform: scale(0.95) translateY(10px) !important;
@@ -379,7 +368,7 @@
         }
         
         /* 【設定：イメージ自体の表現】 
-           通常時はノイズのないストイックなモノクロ（grayscale 100%）。ホバーにより極めて微細に拡大しながら色を取り戻します */
+           通常時はモノクロ。ホバーにより極めて微細に拡大しながら色を取り戻します */
         .image-box img { 
             width: 100%; 
             height: auto; 
@@ -389,8 +378,7 @@
                         transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 【設定：ホバー時の洗練された「＋」マーク演出】
-           画像の上にカーソルを置くと、中央に極めてモダンなプラス記号が浮き上がります */
+        /* 【設定：ホバー時の洗練された「＋」マーク演出】 */
         .image-box::before {
             content: '+';
             position: absolute;
@@ -442,6 +430,7 @@
             color: var(--text-muted); 
         }
         
+        /* */
         /* 【設定：フッター】 常にページ全体の底に静置される、美的な終止符 */
         footer {
             margin-top: 60px;
@@ -450,7 +439,8 @@
         }
 
         /* 【設定：ホームへ戻るリンク】 
-           等幅フォント「Azeret Mono」を採用。ホバーで静かにフェードアウトし、次の操作へと誘います */
+           等幅フォント「Azeret Mono」を採用。ホバーで静かにフェードアウト。
+           project1基準に合わせて、当たり判定領域を上下左右に拡張し極上UXを担保。 */
         .back-link {
             display: inline-block;
             font-size: 11px;
@@ -463,13 +453,23 @@
             text-transform: uppercase;
             font-family: var(--font-mono);
             font-weight: 700;
+            position: relative;
+        }
+
+        .back-link::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            bottom: -15px;
+            left: -25px;
+            right: -25px;
         }
         
         .back-link:hover {
             opacity: 0.5;
         }
         
-        /* 【設定：レスポンシブ補正（タブレット等の中解正）】 */
+        /* 【設定：レスポンシブ補正（タブレット等の中解像度）】 */
         @media (max-width: 1024px) {
             .filters-container {
                 margin-left: 45px;
@@ -490,12 +490,12 @@
                 margin-left: 0;
                 width: 100%;
                 justify-content: flex-start;
-                overflow-x: auto; /* スマホ画面でフィルターボタン群がはみ出た際にスクロールで辿れるよう補正 */
+                overflow-x: auto; /* スマホ画面でフィルターボタン群がはみ出た際にスクロール可能に */
                 padding-bottom: 8px;
-                scrollbar-width: none; /* スタイリッシュにスクロールバーを非表示（Firefox対応） */
+                scrollbar-width: none; /* Firefoxスクロールバー非表示 */
             }
             .filters-container::-webkit-scrollbar {
-                display: none; /* スタイリッシュにスクロールバーを非表示（Chrome / Safari対応） */
+                display: none; /* Chrome / Safariスクロールバー非表示 */
             }
             .works-grid { 
                 display: flex;
@@ -536,69 +536,71 @@
         </div>
 
         <!-- 
-            【パーツ：極上レスポンシブ追従メニューボタン】
+            【標準仕様：極上レスポンシブ追従メニューボタン（project1と完全に同一）】
             `menu1.png` と `menu2.png` の相互スピン変化。
-            エラー時には自動的に美的に補正された「M1」「M2」のプレースホルダーを描画します。
+            エラー時には自動的に美的に補正されたプレースホルダーを描画します。
         -->
         <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
-            <img src="/assets/menu1.png" alt="Open Menu" class="menu-icon icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
-            <img src="/assets/menu2.png" alt="Close Menu" class="menu-icon icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
+            <img src="./assets/menu1.png" alt="Open Menu" class="icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
+            <img src="./assets/menu2.png" alt="Close Menu" class="icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
         </button>
 
         <div class="current-page">WORKS</div>
     </header>
 
+    <!-- -->
     <!-- 
-        【パーツ：スライドイン・サイドバー（MENU-02.pngの完全模写）】
+        【標準仕様：スライドイン・サイドバー（project1と完全に同一のマークアップ仕様）】
         すべてのサブページと1pxの狂いもなく揃えられた極細のアンダーライン（30px長）と、
         画像アセットを最大限に生かすためのプレースホルダー付き画像タグで構成されています。
     -->
     <aside class="sidebar-menu" id="sidebar-menu">
         <div class="sidebar-logo">
-            <img src="/assets/menu2.png" alt="scaL_TONE Symbol" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=Y';">
+            <img src="./assets/menu2.png" alt="scaL_TONE Symbol" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=Y';">
         </div>
         <nav class="sidebar-nav">
             <!-- HOMEリンク（特注サイズ：22pxアイコン） -->
             <a href="index.html" class="sidebar-item home-link">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/ffffff?text=H';" alt="">
+                    <img class="sidebar-icon" src="./assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/fbfaf6?text=H';" alt="">
                 </div>
                 HOME
             </a>
             <a href="about.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=A';" alt="">
+                    <img class="sidebar-icon" src="./assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=A';" alt="">
                 </div>
                 ABOUT
             </a>
             <a href="shop.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=S';" alt="">
+                    <img class="sidebar-icon" src="./assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=S';" alt="">
                 </div>
                 SHOP
             </a>
             <a href="news.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=N';" alt="">
+                    <img class="sidebar-icon" src="./assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=N';" alt="">
                 </div>
                 NEWS
             </a>
-            <!-- WORKSリンク（現在のアクティブなページ） -->
+            <!-- WORKSリンク（現在のアクティブなページ、アクティブ線常時表示） -->
             <a href="works.html" class="sidebar-item active-link">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=W';" alt="">
+                    <img class="sidebar-icon" src="./assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=W';" alt="">
                 </div>
                 WORKS
             </a>
             <a href="contact.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=C';" alt="">
+                    <img class="sidebar-icon" src="./assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=C';" alt="">
                 </div>
                 CONTACT
             </a>
         </nav>
     </aside>
 
+    <!-- -->
     <!-- 
         【パーツ：12カラム型 建築・プロダクト WORKS グリッド】
         各リンク先は project/project1.html などの詳細ページへと適切にマッピングされています。
@@ -610,7 +612,7 @@
         <a href="project/project1.html" class="work-item" data-category="design">
             <span class="work-label">Project No.01</span>
             <div class="image-box">
-                <img src="/assets/p1.png" alt="Concept Study" onerror="this.src='https://placehold.co/800x600/f5f5f5/111111?text=STUDIO+C';">
+                <img src="./assets/p1.png" alt="Concept Study" onerror="this.src='https://placehold.co/800x600/f5f5f5/111111?text=STUDIO+C';">
             </div>
         </a>
 
@@ -618,7 +620,7 @@
         <a href="project/project1.html" class="work-item" data-category="architecture">
             <span class="work-label">Creative Work 02</span>
             <div class="image-box">
-                <img src="/assets/P2.jpg" alt="Structural Light" onerror="this.src='https://placehold.co/800x1000/f5f5f5/111111?text=MONOLITH+L';">
+                <img src="./assets/P2.jpg" alt="Structural Light" onerror="this.src='https://placehold.co/800x1000/f5f5f5/111111?text=MONOLITH+L';">
             </div>
         </a>
 
@@ -626,7 +628,7 @@
         <a href="project/project1.html" class="work-item" data-category="design">
             <span class="work-label">Design Study 03</span>
             <div class="image-box">
-                <img src="/assets/p3.png" alt="Form and Tone" onerror="this.src='https://placehold.co/800x600/f5f5f5/111111?text=SPATIAL+T';">
+                <img src="./assets/p3.png" alt="Form and Tone" onerror="this.src='https://placehold.co/800x600/f5f5f5/111111?text=SPATIAL+T';">
             </div>
         </a>
 
@@ -634,7 +636,7 @@
         <a href="portfolio.html" class="work-item portfolio-item" data-category="portfolio">
             <span class="work-label">Architectural Portfolio</span>
             <div class="image-box">
-                <img src="/assets/portfolio/pot5.png" alt="Student Portfolio Compilation" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=Architectural+Portfolio';">
+                <img src="./assets/portfolio/pot5.png" alt="Student Portfolio Compilation" onerror="this.src='https://placehold.co/800x1131/fafafa/111111?text=Architectural+Portfolio';">
             </div>
         </a>
 
@@ -645,7 +647,8 @@
         <a href="index.html" class="back-link">Back to home</a>
     </footer>
 
-    <!-- 【設定：JavaScriptエンジン（メニュー制御、ページフェード遷移、非対称レイアウト、動的フィルター）】 -->
+    <!-- -->
+    <!-- 【標準仕様：JavaScriptエンジン（project1と完全に一貫させたメニュー・遷移挙動）】 -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // 要素の取得
@@ -657,8 +660,9 @@
             const allItems = Array.from(grid.querySelectorAll('.work-item'));
 
             // ------------------------------------------------------------
-            // 【1. メニュー開閉・トグル処理】
-            // メニュー展開時、グリッドコンテンツを少し右側へスライドさせることで完璧な対比空間を演出。
+            // 【1. メニュー開閉・トグル処理（標準仕様：project1と完全に同一）】
+            // メニュー展開時、グリッドコンテンツを右側へスライド（translateX(60px)）させ、
+            // 背後スクロールを禁止（overflow: hidden）します。
             // ------------------------------------------------------------
             function toggleMenu() {
                 const isOpen = menu.classList.toggle('open');
@@ -666,39 +670,40 @@
                 backdrop.classList.toggle('show');
 
                 if (isOpen) {
-                    document.body.style.overflow = 'hidden'; // 背後の不用意なスクロールを完全に禁止
-                    if (window.innerWidth > 768) {
-                        grid.style.transform = 'translateX(60px)'; // 優雅な右方向へのシフト
+                    document.body.style.overflow = 'hidden'; // 背景スクロールを確実に禁止
+                    if (window.innerWidth > 1024) { // project1基準のレスポンシブ幅（1024px）でシフトを適用
+                        grid.style.transform = 'translateX(60px)'; // プレミアム右方向シフト
                     }
                 } else {
                     document.body.style.overflow = '';
-                    grid.style.transform = 'translateX(0)'; // 元の位置に戻す
+                    grid.style.transform = 'translateX(0)'; // シフト解除
                 }
             }
 
-            // クリック時のバインド
+            // クリックイベントの登録
             trigger.addEventListener('click', toggleMenu);
             backdrop.addEventListener('click', toggleMenu);
 
             // ------------------------------------------------------------
-            // 【2. 完全に同期したページトランジションフェードアウト（600ms）】
-            // サイドバー内のリンクや戻るリンク、作品画像をタップした際、
-            // すぐにジャンプさせず、身体的な余韻を残すためのフェードアウトのあとに遷移します。
+            // 【2. ページトランジションフェードアウト（標準仕様：project1と完全に同一の600ms）】
+            // サイドバーリンク、戻るリンク、作品画像をタップした際、
+            // 600ミリ秒のトランジションアニメーション（page-fade-out）を挟んでから安全に遷移します。
             // ------------------------------------------------------------
-            const menuLinks = document.querySelectorAll('.sidebar-item, .back-link, .work-item');
-            menuLinks.forEach(link => {
+            const transitLinks = document.querySelectorAll('.sidebar-item, .back-link, .work-item');
+            transitLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     const targetUrl = this.getAttribute('href');
                     if (targetUrl && targetUrl !== '#' && !targetUrl.startsWith('javascript:')) {
-                        e.preventDefault(); // 通常の即時移動をキャンセル
+                        e.preventDefault(); // 通常の即時ジャンプをキャンセル
                         
-                        // サイドバーを閉じ、暗幕を解除して遷移準備
+                        // サイドバーを引っ込めて、暗幕をリセットし、シフトを戻します
                         menu.classList.remove('open');
                         trigger.classList.remove('active');
                         backdrop.classList.remove('show');
                         grid.style.transform = 'translateX(0)';
+                        document.body.style.overflow = '';
                         
-                        // project1.htmlと完全に同一の600msのアニメーション遅延の後に安全にジャンプ
+                        // project1基準：600ミリ秒のフェードアウト遅延の後に遷移
                         document.body.classList.add('page-fade-out');
                         setTimeout(() => {
                             window.location.href = targetUrl;
@@ -708,7 +713,7 @@
             });
 
             // ------------------------------------------------------------
-            // 【3. 動的・非対称レイアウトエンジン（Asymmetric Layout Engine）】
+            // 【3. 動的・非対称レイアウトエンジン（Asymmetric Grid Engine）】
             // 黄金比率を元に、PCビューア時のみグリッドカラムの位置（左右スパン）と
             // ネガティブマージン（上方向のズレ）を不規則に割り当て、雑誌の美しいエディトリアルを自動構築。
             // ------------------------------------------------------------
