@@ -130,18 +130,20 @@
             display: grid;
             grid-template-columns: repeat(12, 1fr);
             gap: 40px;
-            max-width: 1200px;
+            max-width: 1000px; /* 画面に若干の余白を生むため縮小 */
             width: 100%;
-            margin: 60px auto 100px;
+            margin: 20px auto 100px;
             transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            align-items: start;
         }
 
-        /* 左側（1〜5カラム）：2枚の画像を並べるエリア */
+        /* 左側：2枚の画像を並べるエリア（左下に配置） */
         .col-visuals { 
-            grid-column: 1 / 6;
+            grid-column: 1 / 8; /* 画像エリアを広めに確保 */
             display: flex;
             gap: 20px;
-            align-items: flex-end; /* 画像の高さが異なる場合は下端で揃える */
+            align-items: flex-end;
+            margin-top: 160px; /* 大胆に下へ移動させて左下を演出 */
         }
         
         .visual-image-box { 
@@ -175,14 +177,14 @@
             transform: scale(1.03);
         }
 
-        /* 右側（6〜12カラム）：解説テキストとスペック表を並べるエリア */
+        /* 右側：解説テキストとスペック表を並べるエリア（右上に配置） */
         .col-details {
-            grid-column: 6 / 13;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-column: 9 / 13; /* 右側にコンパクトに寄せる */
+            display: flex;
+            flex-direction: column; /* 縦並びに変更 */
             gap: 40px;
             border-top: 1px solid var(--border-color); /* 上部の美しい境界線 */
-            padding-top: 30px;
+            padding-top: 20px;
             align-self: start;
             opacity: 0;
             transform: translateY(20px);
@@ -197,16 +199,16 @@
         }
 
         .project-title {
-            font-size: 15px;
+            font-size: 12px; /* 少し小さく */
             font-weight: 700;
             letter-spacing: 0.1em;
             color: var(--text-primary);
         }
 
         .project-desc {
-            font-size: 13px;
+            font-size: 11px; /* 少し小さく */
             line-height: 2.2;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.05em;
             color: var(--text-secondary);
             text-align: justify;
         }
@@ -214,7 +216,7 @@
         /* スペック表（技術仕様）のスタイリング */
         .specs-col {
             font-family: var(--font-mono);
-            font-size: 10px;
+            font-size: 9px; /* 少し小さく */
             color: #777777;
             display: flex;
             flex-direction: column;
@@ -308,6 +310,7 @@
         /* レスポンシブ対応（スマホ・タブレット画面用） */
         @media (max-width: 1024px) {
             .project-grid { display: flex; flex-direction: column; gap: 60px; margin-top: 40px; }
+            .col-visuals { margin-top: 0; } /* モバイル時はマージンをリセット */
             .col-details { display: flex; flex-direction: column; }
         }
         @media (max-width: 600px) {
