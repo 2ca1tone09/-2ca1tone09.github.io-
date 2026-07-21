@@ -70,6 +70,11 @@
         /* メニュー開閉時のアイコン変化アニメーション */
         .menu-trigger img {
             position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
             width: 26px;
             height: auto;
             object-fit: contain;
@@ -494,6 +499,12 @@
     <!-- メニュー展開用のすりガラスオーバーレイ暗幕 -->
     <div class="menu-backdrop" id="menu-backdrop"></div>
 
+    <!-- 極上仕様：固定・追従型スピンメニューボタン（座標ズレを防止するため独立配置） -->
+    <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
+        <img src="assets/menu1.png" alt="Open Menu" class="icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
+        <img src="assets/menu2.png" alt="Close Menu" class="icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
+    </button>
+
     <!-- ヘッダーエリア -->
     <header>
         <!-- 動的フィルターナビゲーション -->
@@ -504,12 +515,6 @@
             <button class="filter-btn" data-filter="clothing">clothing</button>
             <button class="filter-btn" data-filter="portfolio">Portfolio</button>
         </div>
-
-        <!-- 標準仕様：固定・追従型スピンメニューボタン -->
-        <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
-            <img src="assets/menu1.png" alt="Open Menu" class="icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
-            <img src="assets/menu2.png" alt="Close Menu" class="icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
-        </button>
 
         <div class="current-page">WORKS</div>
     </header>
