@@ -70,11 +70,6 @@
         /* メニュー開閉時のアイコン変化アニメーション */
         .menu-trigger img {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            margin: auto;
             width: 26px;
             height: auto;
             object-fit: contain;
@@ -130,6 +125,12 @@
             margin-bottom: 12px;
             display: flex;
             justify-content: flex-start;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-logo:hover {
+            opacity: 0.5;
         }
 
         .sidebar-logo img {
@@ -621,6 +622,7 @@
             const grid = document.getElementById('works-grid');
             const filterBtns = document.querySelectorAll('.filter-btn');
             const allItems = Array.from(grid.querySelectorAll('.work-item'));
+            const sidebarLogo = menu.querySelector('.sidebar-logo');
 
             // メニュー展開時の処理
             function toggleMenu() {
@@ -642,6 +644,9 @@
             // イベントバインド
             trigger.addEventListener('click', toggleMenu);
             backdrop.addEventListener('click', toggleMenu);
+            if (sidebarLogo) {
+                sidebarLogo.addEventListener('click', toggleMenu);
+            }
 
             // ページ遷移イージング
             const transitLinks = document.querySelectorAll('.sidebar-item, .back-link, .work-item');
