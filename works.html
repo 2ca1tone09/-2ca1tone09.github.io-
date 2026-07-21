@@ -112,7 +112,7 @@
             transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
             display: flex; 
             flex-direction: column; 
-            gap: 24px;
+            gap: 28px; /* 完全統一仕様 */
             box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
         }
         
@@ -137,7 +137,7 @@
         .sidebar-nav { 
             display: flex; 
             flex-direction: column; 
-            gap: 20px; 
+            gap: 22px; /* 完全統一仕様 */
         }
         
         .sidebar-item {
@@ -172,6 +172,11 @@
             height: auto; 
             object-fit: contain; 
             opacity: 0.9; 
+            transition: transform 0.4s ease; /* 完全統一仕様: ホバーアニメーションの準備 */
+        }
+
+        .sidebar-item:hover .sidebar-icon {
+            transform: scale(1.1); /* 完全統一仕様: ホバー時の上品な拡大 */
         }
         
         /* HOMEリンク用拡張 */
@@ -211,7 +216,7 @@
             z-index: 999; 
             opacity: 0; 
             pointer-events: none; 
-            transition: opacity 0.6s ease;
+            transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* 完全統一仕様 */
         }
         
         .menu-backdrop.show { 
@@ -495,15 +500,15 @@
         <div class="filters-container" id="filters-container">
             <button class="filter-btn active" data-filter="all">All</button>
             <button class="filter-btn" data-filter="interior">interior</button>
-            <button class="filter-btn" data-filter="interior">product</button>
+            <button class="filter-btn" data-filter="product">product</button> <!-- typo修正: interior -> product -->
             <button class="filter-btn" data-filter="clothing">clothing</button>
             <button class="filter-btn" data-filter="portfolio">Portfolio</button>
         </div>
 
         <!-- 標準仕様：固定・追従型スピンメニューボタン -->
         <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
-            <img src="./assets/menu1.png" alt="Open Menu" class="icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
-            <img src="./assets/menu2.png" alt="Close Menu" class="icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
+            <img src="assets/menu1.png" alt="Open Menu" class="icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
+            <img src="assets/menu2.png" alt="Close Menu" class="icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
         </button>
 
         <div class="current-page">WORKS</div>
@@ -512,48 +517,48 @@
     <!-- 標準仕様：スライドイン・ライトグレーサイドバー（MENU-02.png完全再現） -->
     <aside class="sidebar-menu" id="sidebar-menu">
         <div class="sidebar-logo">
-            <img src="./assets/menu2.png" alt="scaL_TONE Symbol" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=Y';">
+            <img src="assets/menu2.png" alt="scaL_TONE Symbol" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=Y';">
         </div>
         <nav class="sidebar-nav">
             <!-- HOME リンク（特注サイズ：22pxアイコン） -->
             <a href="index.html" class="sidebar-item home-link">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="./assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/fbfaf6?text=H';" alt="">
+                    <img class="sidebar-icon" src="assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/ffffff?text=H';" alt="">
                 </div>
                 HOME
             </a>
             <!-- ABOUT リンク -->
             <a href="about.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="./assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=A';" alt="">
+                    <img class="sidebar-icon" src="assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=A';" alt="">
                 </div>
                 ABOUT
             </a>
             <!-- SHOP リンク -->
             <a href="shop.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="./assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=S';" alt="">
+                    <img class="sidebar-icon" src="assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=S';" alt="">
                 </div>
                 SHOP
             </a>
             <!-- NEWS リンク -->
             <a href="news.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="./assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=N';" alt="">
+                    <img class="sidebar-icon" src="assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=N';" alt="">
                 </div>
                 NEWS
             </a>
             <!-- WORKS リンク（現在のアクティブページ。下線が常時表示されます） -->
             <a href="works.html" class="sidebar-item active-link">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="./assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=W';" alt="">
+                    <img class="sidebar-icon" src="assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=W';" alt="">
                 </div>
                 WORKS
             </a>
             <!-- CONTACT リンク -->
             <a href="contact.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="./assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/fbfaf6?text=C';" alt="">
+                    <img class="sidebar-icon" src="assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=C';" alt="">
                 </div>
                 CONTACT
             </a>
