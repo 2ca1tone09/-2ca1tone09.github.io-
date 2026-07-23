@@ -360,7 +360,7 @@
             color: var(--text-primary);
             text-decoration: none;
             transition: opacity 0.3s;
-            font-family: var(--font-mono);
+            font-family: var(--font-sans); /* リファレンス画像（Arimo）に統合 */
             font-weight: 700;
         }
 
@@ -389,7 +389,7 @@
             pointer-events: auto;
         }
 
-        /* リファレンス画像と同じAzeret Monoフォント（var(--font-mono)）を適用 */
+        /* リファレンス画像と同じArimoフォント（var(--font-sans)）を適用 */
         .back-link {
             display: inline-block;
             font-size: 11px;
@@ -400,7 +400,7 @@
             padding-bottom: 4px;
             transition: opacity 0.3s ease;
             text-transform: uppercase;
-            font-family: var(--font-mono); /* リファレンスと同じAzeret Mono */
+            font-family: var(--font-sans); /* リファレンス画像と同じArimo */
             font-weight: 700;
             position: relative;
         }
@@ -483,7 +483,7 @@
     <!-- メニュー展開用のすりガラスオーバーレイ暗幕 -->
     <div class="menu-backdrop" id="menu-backdrop"></div>
 
-    <!-- 極上仕様：固定・追従型スピンメニューボタン（座標ズレを防止するため独立配置） -->
+    <!-- 固定・追従型スピンメニューボタン -->
     <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
         <img src="assets/menu1.png" alt="Open Menu" class="icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
         <img src="assets/menu2.png" alt="Close Menu" class="icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
@@ -494,7 +494,7 @@
         <div class="current-page">CONTACT</div>
     </header>
 
-    <!-- 標準仕様：スライドイン・サイドバー -->
+    <!-- スライドイン・サイドバー -->
     <aside class="sidebar-menu" id="sidebar-menu">
         <nav class="sidebar-nav">
             <!-- HOME リンク -->
@@ -587,7 +587,7 @@
                 <!-- ================= 2. CONFIRM PHASE (確認) ================= -->
                 <form id="confirm-form" class="form-phase">
                     <div id="display-area" style="display: flex; flex-direction: column; gap: 30px;">
-                        <!-- JSで動的に確認項目を注入します -->
+                        <!-- JSで動的に確認項目を注入 -->
                     </div>
                     
                     <div class="btn-wrapper">
@@ -611,7 +611,7 @@
         </div>
     </main>
 
-    <!-- フッター (最初は非表示。完了画面の時だけ出現) -->
+    <!-- フッター (完了画面の時だけ出現) -->
     <footer id="footer-nav">
         <a href="index.html" class="back-link">BACK TO HOME</a>
     </footer>
@@ -752,7 +752,7 @@
                 }, 300);
             }
 
-            // 標準仕様：サイドバーメニュー制御
+            // サイドバーメニュー制御
             const trigger = document.getElementById('menu-trigger');
             const menu = document.getElementById('sidebar-menu');
             const backdrop = document.getElementById('menu-backdrop');
@@ -763,7 +763,7 @@
                 backdrop.classList.toggle('show');
 
                 if (isOpen) {
-                    document.body.style.overflow = 'hidden'; // 背景スクロール禁止
+                    document.body.style.overflow = 'hidden';
                     if (window.innerWidth > 1024) {
                         contactContainer.style.transform = 'translateX(60px)';
                     }
@@ -776,7 +776,7 @@
             trigger.addEventListener('click', toggleMenu);
             backdrop.addEventListener('click', toggleMenu);
 
-            // 標準仕様：ページ遷移イージング（600ms フェードアウト）
+            // ページ遷移イージング（600ms フェードアウト）
             const transitLinks = document.querySelectorAll('.sidebar-item, .back-link, .btn-back[href]');
             transitLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
