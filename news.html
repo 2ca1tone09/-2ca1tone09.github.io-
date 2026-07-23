@@ -318,18 +318,19 @@
             z-index: 10;
         }
 
+        /* リファレンス画像（BACK TO HOME）に忠実なタイポグラフィ仕様 */
         .back-link {
             display: inline-block;
-            font-size: 11px;
-            letter-spacing: 0.15em;
+            font-size: 10px;
+            letter-spacing: 0.28em; /* 広い文字間隔 */
             color: var(--text-primary);
             text-decoration: none;
             border-bottom: 1px solid var(--text-primary);
-            padding-bottom: 4px;
+            padding-bottom: 6px;   /* 下線との絶妙な余白 */
             transition: opacity 0.3s ease;
             text-transform: uppercase;
             font-family: var(--font-mono);
-            font-weight: 700;
+            font-weight: 400;     /* 繊細で美しく揃えられた太さ */
             position: relative;
         }
 
@@ -475,7 +476,7 @@
 
     <!-- フッター -->
     <footer>
-        <a href="index.html" class="back-link">Back to home</a>
+        <a href="index.html" class="back-link">BACK TO HOME</a>
     </footer>
 
     <!-- アプリケーション制御ロジック（標準仕様） -->
