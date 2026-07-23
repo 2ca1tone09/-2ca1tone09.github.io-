@@ -418,19 +418,19 @@
             width: 100%;
         }
 
-        /* ホームへ戻るリンク（リファレンス画像と同じArimoフォントに変更） */
+        /* ホームへ戻るリンク（標準仕様：Azeret Mono / 400 / 10px / 0.28em） */
         .back-link {
             display: inline-block;
-            font-size: 11px;
-            letter-spacing: 0.15em;
+            font-size: 10px;
+            letter-spacing: 0.28em;
             color: var(--text-primary);
             text-decoration: none;
             border-bottom: 1px solid var(--text-primary);
-            padding-bottom: 4px;
+            padding-bottom: 6px;
             transition: opacity 0.3s ease;
             text-transform: uppercase;
-            font-family: var(--font-sans); /* リファレンス画像と同じArimo */
-            font-weight: 700;
+            font-family: var(--font-mono); /* 標準仕様：Azeret Mono */
+            font-weight: 400;             /* 標準仕様：細字 */
             position: relative;
         }
 
