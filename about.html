@@ -4,13 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ABOUT | scaL_TONE</title>
+    
+    <!-- 外部フォント（モダンなArimo、等幅のAzeret Mono）を読み込み -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Azeret+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg-color: #ffffff;             /* 背景色：ピュアホワイト */
+            --text-primary: #111111;         /* 主要文字：ディープブラック */
+            --text-secondary: #555555;       /* 補助文字：ミディアムグレー */
+            --text-muted: #888888;           /* 控えめな文字：ライトグレー */
+            --border-color: #111111;         /* 境界線：強弱を明確にするための黒線 */
+            --font-sans: 'Arimo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: 'Azeret Mono', monospace;
+        }
+
+        /* グローバルリセット */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
         
         body { 
-            background-color: #ffffff; 
-            color: #111111; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-primary); 
+            font-family: var(--font-sans); 
             padding: 40px 20px 100px; 
             min-height: 100vh;
             display: flex;
@@ -18,33 +39,18 @@
             justify-content: space-between;
             overflow-x: hidden;
             position: relative;
+            opacity: 1;
+            /* 0.6s のスムーズなページフェード設定 */
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
         
-        /* 1. 左端にメニューボタンを固定したため、右端の現在地表示を担保するヘッダー */
-        header { 
-            max-width: 1200px; 
-            margin: 0 auto 80px; 
-            display: flex; 
-            justify-content: flex-end; /* 右端のみに寄せて美しく対比させる */
-            align-items: center;
-            width: 100%;
-            z-index: 100;
-        }
-        
-        .current-page { 
-            font-size: 10px; 
-            letter-spacing: 0.2em; 
-            font-weight: 700; 
-            border-bottom: 1px solid #111111; 
-            padding-bottom: 4px; 
-            text-transform: uppercase;
+        /* ページ切り替え（標準フェードアウト用クラス） */
+        body.page-fade-out {
+            opacity: 0 !important;
+            transform: translateY(-8px);
         }
 
-        /* 
-            【極上レスポンシブ固定（追従）メニューボタン】
-            スクロールしても左上に追従。
-            画面最大幅1200pxの左端にピタリとシンクロし、スマホ等では端から20pxの美しい位置をキープ。
-        */
+        /* 標準仕様：固定・追従型スピンメニューボタン（座標ズレ防止のため独立配置） */
         .menu-trigger {
             position: fixed;
             top: 40px;
@@ -57,175 +63,169 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1100; /* サイドバーよりも手前に表示 */
+            z-index: 1100; /* スライドサイドバーより前面に維持 */
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
+        /* メニュー開閉時のアイコン変化アニメーション（標準スピン＆スケール） */
         .menu-trigger img {
             position: absolute;
             width: 26px;
             height: auto;
             object-fit: contain;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
-                        opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 初期状態: menu1.png (三本バー) がアクティブ、menu2.png (テトラポット) は回転して隠れる */
-        .menu-trigger .icon-default {
-            opacity: 1;
-            transform: rotate(0deg) scale(1);
+        .menu-trigger .icon-default { 
+            opacity: 1; 
+            transform: rotate(0deg) scale(1); 
+        }
+        
+        .menu-trigger .icon-active { 
+            opacity: 0; 
+            transform: rotate(-180deg) scale(0.7); 
         }
 
-        .menu-trigger .icon-active {
-            opacity: 0;
-            transform: rotate(-180deg) scale(0.7);
+        .menu-trigger.active .icon-default { 
+            opacity: 0; 
+            transform: rotate(180deg) scale(0.7); 
+        }
+        
+        .menu-trigger.active .icon-active { 
+            opacity: 1; 
+            transform: rotate(0deg) scale(1); 
         }
 
-        /* アクティブ（展開）状態: menu1.png がスピン消去、menu2.png がスピン登場 */
-        .menu-trigger.active .icon-default {
-            opacity: 0;
-            transform: rotate(180deg) scale(0.7);
-        }
-
-        .menu-trigger.active .icon-active {
-            opacity: 1;
-            transform: rotate(0deg) scale(1);
-        }
-
-        /* 15〜20%の割合を占めるスライドイン・サイドバー（MENU-02.pngの完全再現） */
+        /* 標準仕様：スライドインサイドバー */
         .sidebar-menu {
-            position: fixed;
-            top: 0;
-            left: -260px; /* 初期状態は画面外に隠蔽 */
-            width: 240px;
+            position: fixed; 
+            top: 0; 
+            left: -260px; 
+            width: 240px; 
             height: 100vh;
-            background-color: #eaeaea; /* カンプ通りのマットなライトグレー */
-            z-index: 1000;
-            padding: 120px 30px 40px; /* 上部にテトラポットボタンの余白を担保 */
-            display: flex;
-            flex-direction: column;
-            gap: 28px;
+            background-color: #eaeaea; 
+            z-index: 1000; 
+            padding: 120px 30px 40px;
             transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            display: flex; 
+            flex-direction: column; 
+            gap: 28px;
             box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
         }
-
-        .sidebar-menu.open {
-            left: 0; /* 滑らかに出現 */
+        
+        .sidebar-menu.open { 
+            left: 0; 
         }
 
-        /* サイドバー最上部のブランドマーク (menu2.pngをシンボル表示) */
-        .sidebar-logo {
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: flex-start;
+        .sidebar-nav { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 22px; 
         }
-
-        .sidebar-logo img {
-            width: 32px;
-            height: auto;
-            object-fit: contain;
-        }
-
-        /* サイドバー内のリンク構造 */
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 22px;
-        }
-
+        
         .sidebar-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
             text-decoration: none;
-            color: #111111;
-            font-size: 11px;
-            font-weight: 700;
+            color: #111111; 
+            font-size: 11px; 
+            font-weight: 700; 
             letter-spacing: 0.15em;
-            text-transform: uppercase;
-            padding: 6px 0;
+            text-transform: uppercase; 
+            padding: 6px 0; 
             position: relative;
         }
-
-        /* アイコンを包むラッパーコンテナを24pxで完全固定。これで文字の開始位置を完璧に揃える */
-        .sidebar-icon-wrapper {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+        
+        .sidebar-icon-wrapper { 
+            width: 24px; 
+            height: 24px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-shrink: 0; 
         }
-
-        /* 指定された画像ファイルを呼び出すサイドバーアイコン用スタイル */
-        .sidebar-icon {
-            max-width: 16px;
-            max-height: 16px;
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-            opacity: 0.9;
+        
+        .sidebar-icon { 
+            max-width: 16px; 
+            max-height: 16px; 
+            width: 100%; 
+            height: auto; 
+            object-fit: contain; 
+            opacity: 0.9; 
             transition: transform 0.4s ease;
         }
 
         .sidebar-item:hover .sidebar-icon {
             transform: scale(1.1);
         }
-
-        /* 【特注】HOMEアイコンのみ、お預かりしているサイズ感を活かすためにwrapper内で最大22pxまで拡張 */
-        .sidebar-item.home-link .sidebar-icon {
-            max-width: 22px;
-            max-height: 22px;
+        
+        .sidebar-item.home-link .sidebar-icon { 
+            max-width: 22px; 
+            max-height: 22px; 
         }
 
-        /* 
-           【完全に統一された長さと太さのアンダーバー】
-           すべてのメニュー、すべての状態（通常時・ホバー時・アクティブ時）において、
-           線の長さ（30px）と太さ（1px）をミリ単位で完全に均一に統一しました。
-           これにより、ミニマルなグリッドの規律がより一層際立ちます。
-        */
+        /* 完全に統一された30px幅・1px厚の極細アンダーライン */
         .sidebar-item::after {
-            content: '';
-            position: absolute;
-            left: 36px; /* wrapper(24px) + margin(12px) の位置に完璧に固定 */
-            bottom: 0;
-            width: 30px; /* 完全に統一された固定長 */
-            height: 1px; /* 完全に統一された極細ライン */
-            background-color: #111111;
-            opacity: 0; /* 通常時は静寂を保つために非表示 */
+            content: ''; 
+            position: absolute; 
+            left: 36px; 
+            bottom: 0; 
+            width: 30px; 
+            height: 1px;
+            background-color: #111111; 
+            opacity: 0; 
             transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
-
-        /* ホバー時に同じ長さ・太さのまま美しくフェードイン */
-        .sidebar-item:hover::after {
-            opacity: 1;
+        
+        .sidebar-item:hover::after, 
+        .sidebar-item.active-link::after { 
+            opacity: 1; 
         }
 
-        /* アクティブなページ（ABOUT）も同じ長さ・太さのまま常時表示 */
-        .sidebar-item.active-link::after {
-            opacity: 1;
-        }
-
-        /* 背景のソフトな暗幕（メインコンテンツに集中させるための薄いレイヤー） */
+        /* メニュー背景のソフトな半透明すりガラスオーバーレイ */
         .menu-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
             height: 100vh;
-            background-color: rgba(255, 255, 255, 0.4);
+            background-color: rgba(255, 255, 255, 0.6); 
             backdrop-filter: blur(2px);
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
+            z-index: 999; 
+            opacity: 0; 
+            pointer-events: none; 
             transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
-
-        .menu-backdrop.show {
-            opacity: 1;
-            pointer-events: auto;
+        
+        .menu-backdrop.show { 
+            opacity: 1; 
+            pointer-events: auto; 
         }
 
-        /* 2. 3カラムグリッドコンテナ */
+        /* ヘッダーエリア */
+        header { 
+            max-width: 1200px; 
+            margin: 0 auto 80px; 
+            display: flex; 
+            justify-content: flex-end; 
+            align-items: center;
+            width: 100%;
+            z-index: 100;
+        }
+        
+        .current-page { 
+            font-size: 10px; 
+            letter-spacing: 0.2em; 
+            font-weight: 700; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 4px; 
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+        }
+
+        /* ABOUTコンテンツ構造 */
         .about-container { 
             display: grid; 
             grid-template-columns: repeat(12, 1fr); 
@@ -237,11 +237,10 @@
             width: 100%;
             opacity: 0;
             animation: fadeInPage 1.2s ease-out forwards;
-            align-items: center; /* 縦方向の位置をテキストの高さに揃える（中央揃え） */
+            align-items: center; 
             transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
         
-        /* 左カラム：セクションラベル */
         .about-label { 
             grid-column: 1 / 3; 
             font-size: 10px; 
@@ -249,10 +248,9 @@
             color: #888888; 
             text-transform: uppercase; 
             font-weight: 500;
-            align-self: start; /* ラベルだけは上部で固定 */
+            align-self: start; 
         }
         
-        /* 中央カラム：ブランド紹介・テキストコンテンツ */
         .about-content { 
             grid-column: 3 / 8; 
             display: flex; 
@@ -274,7 +272,6 @@
             color: #333333;
         }
 
-        /* 右カラム：ブランドイメージ画像エリア（カンプのS型幾何学シンボルと調和） */
         .about-image {
             grid-column: 8 / 13;
             overflow: hidden;
@@ -298,7 +295,7 @@
             filter: grayscale(0%);
         }
         
-        /* 3. 最下部のBack to home（他ページと完全統一） */
+        /* フッターエリア */
         footer {
             margin-top: 100px;
             text-align: center;
@@ -316,6 +313,18 @@
             padding-bottom: 4px;
             transition: opacity 0.3s ease;
             text-transform: uppercase;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            position: relative;
+        }
+
+        .back-link::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            bottom: -15px;
+            left: -25px;
+            right: -25px;
         }
         
         .back-link:hover {
@@ -328,7 +337,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* モバイル対応（3カラムを縦並びに） */
+        /* モバイル対応 */
         @media (max-width: 768px) { 
             .about-container { 
                 display: flex; 
@@ -340,7 +349,7 @@
             }
             .about-image {
                 margin-top: 20px;
-                order: -1; /* スマホ表示では画像がテキストの上に来るように */
+                order: -1; 
                 max-height: none;
             }
             .about-image img {
@@ -351,80 +360,69 @@
 </head>
 <body>
 
-    <!-- 背景の薄暗いオーバーレイレイヤー -->
+    <!-- メニュー展開用のすりガラスオーバーレイ暗幕 -->
     <div class="menu-backdrop" id="menu-backdrop"></div>
 
-    <!-- ヘッダー：右上に現在地表示（メニューボタンはfixed化したため、位置調整） -->
-    <header>
-        <!-- menu1.png ⇄ menu2.png プレミアム変形メニューボタン（fixedで画面に完全追従） -->
-        <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
-            <img src="/assets/menu1.png" alt="Open Menu" class="menu-icon icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
-            <img src="/assets/menu2.png" alt="Close Menu" class="menu-icon icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
-        </button>
+    <!-- 極上仕様：固定・追従型スピンメニューボタン（座標ズレを防止するため独立配置） -->
+    <button class="menu-trigger" id="menu-trigger" aria-label="Menu">
+        <img src="assets/menu1.png" alt="Open Menu" class="icon-default" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M1';">
+        <img src="assets/menu2.png" alt="Close Menu" class="icon-active" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=M2';">
+    </button>
 
+    <!-- ヘッダーエリア -->
+    <header>
         <div class="current-page">ABOUT</div>
     </header>
 
-    <!-- スライドインするライトグレーサイドバー（MENU-02.pngを完全模写） -->
+    <!-- 標準仕様：スライドイン・サイドバー -->
     <aside class="sidebar-menu" id="sidebar-menu">
-        <!-- サイドバー最上部にテトラポットシンボルを美しく配置 -->
-        <div class="sidebar-logo">
-            <img src="/assets/menu2.png" alt="scaL_TONE Symbol" onerror="this.src='https://placehold.co/32x32/111111/ffffff?text=Y';">
-        </div>
         <nav class="sidebar-nav">
-            <!-- 
-                【書き換え可能な画像タグ仕様のサイドバーアイコン】
-                ご指定の画像ファイルのパスに変更してください。
-                assetsフォルダ等から各画像ファイルを読み込みます。
-                もし画像がまだアップロードされていない場合でも、onerrorによってデザイン崩れを防ぐプレースホルダーが自動的に作動します。
-            -->
-            
-            <!-- HOME (特注：home-linkクラスを追加してアイコンを大きめに調整) -->
+            <!-- HOME リンク -->
             <a href="index.html" class="sidebar-item home-link">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/ffffff?text=H';" alt="">
+                    <img class="sidebar-icon" src="assets/logo3.png" onerror="this.src='https://placehold.co/22x22/111111/ffffff?text=H';" alt="">
                 </div>
                 HOME
             </a>
-            <!-- ABOUT (Active) -->
+            <!-- ABOUT リンク（アクティブ） -->
             <a href="about.html" class="sidebar-item active-link">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=A';" alt="">
+                    <img class="sidebar-icon" src="assets/about2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=A';" alt="">
                 </div>
                 ABOUT
             </a>
-            <!-- SHOP -->
+            <!-- SHOP リンク -->
             <a href="shop.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=S';" alt="">
+                    <img class="sidebar-icon" src="assets/shop2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=S';" alt="">
                 </div>
                 SHOP
             </a>
-            <!-- NEWS -->
+            <!-- NEWS リンク -->
             <a href="news.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=N';" alt="">
+                    <img class="sidebar-icon" src="assets/news2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=N';" alt="">
                 </div>
                 NEWS
             </a>
-            <!-- WORKS -->
+            <!-- WORKS リンク -->
             <a href="works.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=W';" alt="">
+                    <img class="sidebar-icon" src="assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=W';" alt="">
                 </div>
                 WORKS
             </a>
-            <!-- CONTACT -->
+            <!-- CONTACT リンク -->
             <a href="contact.html" class="sidebar-item">
                 <div class="sidebar-icon-wrapper">
-                    <img class="sidebar-icon" src="/assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=C';" alt="">
+                    <img class="sidebar-icon" src="assets/contact2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=C';" alt="">
                 </div>
                 CONTACT
             </a>
         </nav>
     </aside>
 
-    <!-- メインコンテンツ：3カラム構造 -->
+    <!-- メインコンテンツ -->
     <main>
         <div class="about-container" id="main-content">
             <!-- 左カラム -->
@@ -443,7 +441,7 @@
 
             <!-- 右カラム -->
             <div class="about-image">
-                <img src="/assets/logo2.png" alt="scaL_TONE Visual" onerror="this.src='https://placehold.co/280x280/eaeaea/111111?text=scaL_TONE';">
+                <img src="assets/logo2.png" alt="scaL_TONE Visual" onerror="this.src='https://placehold.co/280x280/eaeaea/111111?text=scaL_TONE';">
             </div>
         </div>
     </main>
@@ -453,7 +451,7 @@
         <a href="index.html" class="back-link">Back to home</a>
     </footer>
 
-    <!-- メニュー開閉用JavaScript -->
+    <!-- アプリケーション制御ロジック（標準仕様） -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const trigger = document.getElementById('menu-trigger');
@@ -461,17 +459,16 @@
             const backdrop = document.getElementById('menu-backdrop');
             const mainContent = document.getElementById('main-content');
 
-            // メニュー展開時のトグル処理
+            // メニュー開閉処理
             function toggleMenu() {
                 const isOpen = menu.classList.toggle('open');
                 trigger.classList.toggle('active');
                 backdrop.classList.toggle('show');
 
-                // メニューが展開されたらメインエリアを少し右側にシフトさせて緊張感を演出（MENU-02.pngの構造の再現）
                 if (isOpen) {
                     document.body.style.overflow = 'hidden'; // 背景スクロール禁止
-                    if (window.innerWidth > 768) {
-                        mainContent.style.transform = 'translateX(60px)';
+                    if (window.innerWidth > 1024) {
+                        mainContent.style.transform = 'translateX(60px)'; // 右シフト
                     }
                 } else {
                     document.body.style.overflow = '';
@@ -479,28 +476,28 @@
                 }
             }
 
-            // クリックイベントの登録
+            // イベント登録
             trigger.addEventListener('click', toggleMenu);
             backdrop.addEventListener('click', toggleMenu);
 
-            // メニュー展開時のリンククリック時にフェードアウトをかける処理
-            const links = document.querySelectorAll('.sidebar-item');
-            links.forEach(link => {
+            // ページ遷移イージング（600ms フェードアウト）
+            const transitLinks = document.querySelectorAll('.sidebar-item, .back-link');
+            transitLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     const targetUrl = this.getAttribute('href');
-                    if (targetUrl && targetUrl !== '#') {
+                    if (targetUrl && targetUrl !== '#' && !targetUrl.startsWith('javascript:')) {
                         e.preventDefault();
                         
-                        // サイドバーを引っ込めて暗幕を解除
                         menu.classList.remove('open');
                         trigger.classList.remove('active');
                         backdrop.classList.remove('show');
                         mainContent.style.transform = 'translateX(0)';
+                        document.body.style.overflow = '';
                         
-                        // 優雅なフェードアウトの後に遷移
+                        document.body.classList.add('page-fade-out');
                         setTimeout(() => {
                             window.location.href = targetUrl;
-                        }, 500); 
+                        }, 600); 
                     }
                 });
             });
