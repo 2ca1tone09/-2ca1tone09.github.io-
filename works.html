@@ -418,7 +418,7 @@
             width: 100%;
         }
 
-        /* ホームへ戻るリンク */
+        /* ホームへ戻るリンク（リファレンス画像と同じArimoフォントに設定） */
         .back-link {
             display: inline-block;
             font-size: 11px;
@@ -429,7 +429,7 @@
             padding-bottom: 4px;
             transition: opacity 0.3s ease;
             text-transform: uppercase;
-            font-family: var(--font-mono);
+            font-family: var(--font-sans); /* リファレンス画像（Arimo）に統合 */
             font-weight: 700;
             position: relative;
         }
@@ -512,7 +512,7 @@
         <div class="filters-container" id="filters-container">
             <button class="filter-btn active" data-filter="all">All</button>
             <button class="filter-btn" data-filter="interior">interior</button>
-            <button class="filter-btn" data-filter="product">product</button> <!-- typo修正: interior -> product -->
+            <button class="filter-btn" data-filter="product">product</button>
             <button class="filter-btn" data-filter="clothing">clothing</button>
             <button class="filter-btn" data-filter="portfolio">Portfolio</button>
         </div>
@@ -520,7 +520,7 @@
         <div class="current-page">WORKS</div>
     </header>
 
-    <!-- 標準仕様：スライドイン・ライトグレーサイドバー（MENU-02.png完全再現） -->
+    <!-- 標準仕様：スライドイン・ライトグレーサイドバー -->
     <aside class="sidebar-menu" id="sidebar-menu">
         <nav class="sidebar-nav">
             <!-- HOME リンク（特注サイズ：22pxアイコン） -->
@@ -551,7 +551,7 @@
                 </div>
                 NEWS
             </a>
-            <!-- WORKS リンク（現在のアクティブページ。下線が常時表示されます） -->
+            <!-- WORKS リンク（現在のアクティブページ） -->
             <a href="works.html" class="sidebar-item active-link">
                 <div class="sidebar-icon-wrapper">
                     <img class="sidebar-icon" src="assets/work2.png" onerror="this.src='https://placehold.co/16x16/111111/ffffff?text=W';" alt="">
@@ -607,7 +607,7 @@
 
     <!-- フッター -->
     <footer>
-        <a href="index.html" class="back-link">Back to home</a>
+        <a href="index.html" class="back-link">BACK TO HOME</a>
     </footer>
 
     <!-- アプリケーション制御ロジック -->
